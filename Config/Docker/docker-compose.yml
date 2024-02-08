@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+    api:
+        container_name: web-api-server
+        ports:
+            - "8080:80"
+            - "8443:443"
+        build:
+            context: ../../
+            dockerfile: ./Config/Docker/Dockerfile
+        networks:
+            - api-server
+    db:
+        image: mysql:8.0
+        container_name: mysql-db
+        volumes:
+            - ../Database/Init/:/docker-entrypoint-initdb.d
+        environment:
+            - MYSQL_ROOT_PASSWORD=0000
+        ports:
+            - "3306:3306"
+        networks:
+            - api-server
+
+networks:
+    api-server:
+        driver: bridge
