@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
+using Web_API_Server.Repository;
 
 namespace Controllers;
 
@@ -9,19 +10,21 @@ namespace Controllers;
 [Route("[controller]")]
 public class AccountController : ControllerBase
 {
+    private readonly AccountDB accountDB;
+
+    public AccountController(AccountDB _accountDB)
+    {
+        accountDB = _accountDB;
+    }
+
     [HttpGet("{Id}")]
     public async Task<AccountRes> Get(int id)
     {
         AccountRes response = new AccountRes();
 
-        using (MySqlConnection connection = await Database.GetMySqlConnetion())
-        {
-            UserInfo userInfo = await connection.QuerySingleOrDefaultAsync<UserInfo>(
-                "SELECT LoginId, HashedPassword, CreatedAt FROM Account WHERE Id = @id", new { id = id } );
-
-            response.LogindId = userInfo.LoginId;
-            response.CreatedAt = userInfo.CreatedAt;
-        }
+        UserInfo userInfo = await accountDB.GetUserInfo(id);
+        response.LogindId = userInfo.LoginId;
+        response.CreatedAt = userInfo.CreatedAt;
 
         return response;
     }
