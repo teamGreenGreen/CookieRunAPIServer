@@ -1,8 +1,16 @@
+using Controllers;
+using MySqlConnector;
+using SqlKata.Compilers;
+using SqlKata.Execution;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<QueryFactory>(provider => {
+    return new QueryFactory(Database.GetMySqlConnetion().Result, new MySqlCompiler());
+});
 
 var app = builder.Build();
 
