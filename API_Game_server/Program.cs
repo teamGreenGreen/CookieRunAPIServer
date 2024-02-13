@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 IConfiguration configuration = builder.Configuration;
 
-// DB ���� ������ ���Ӽ� �������� �־��ֱ� ����
+// DB 연결 설정을 종속성 주입으로 넣어주기 위함
 builder.Services.Configure<DBConfig>(configuration.GetSection(nameof(DBConfig)));
 
 // Add services to the container.
@@ -34,7 +34,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// DB �ʱ�ȭ (DB�� ������ �� ����ϴ� mysql connection string�� ����)
+// DB 초기화 (DB에 연결할 때 사용하는 mysql connection string을 설정)
 Database.Init(app.Configuration);
 
 app.Run();

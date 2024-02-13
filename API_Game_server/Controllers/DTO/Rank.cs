@@ -7,4 +7,8 @@ namespace API_Game_Server.Controllers.DTO
         public string UserName {  get; set; }
         public double Score { get; set; }
     }
+    public class RanksReq
+    { 
+        public int Page {  get; set; } 
+    }
 }
