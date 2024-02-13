@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
-using Web_API_Server.Repository;
+using API_Game_Server.Repository;
 
 namespace Controllers;
 

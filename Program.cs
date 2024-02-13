@@ -2,8 +2,8 @@ using Controllers;
 using MySqlConnector;
 using SqlKata.Compilers;
 using SqlKata.Execution;
-using Web_API_Server;
-using Web_API_Server.Repository;
+using API_Game_Server;
+using API_Game_Server.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
