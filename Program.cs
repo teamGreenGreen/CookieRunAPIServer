@@ -4,17 +4,22 @@ using SqlKata.Compilers;
 using SqlKata.Execution;
 using API_Game_Server;
 using API_Game_Server.Repository;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
 IConfiguration configuration = builder.Configuration;
 
-// DB 연결 설정을 종속성 주입으로 넣어주기 위함
+// DB ���� ������ ���Ӽ� �������� �־��ֱ� ����
 builder.Services.Configure<DBConfig>(configuration.GetSection(nameof(DBConfig)));
 
 // Add services to the container.
 builder.Services.AddTransient<AccountDB>();
 builder.Services.AddTransient<GameDB>();
+// Add services about redis
+builder.Services.AddSingleton<IConnectionMultiplexer>(opt =>
+    ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));
+builder.Services.AddScoped<RedisDB>();
 builder.Services.AddControllers();
 builder.Services.AddScoped<QueryFactory>(provider => {
     return new QueryFactory(Database.GetMySqlConnetion().Result, new MySqlCompiler());
@@ -29,7 +34,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// DB 초기화 (DB에 연결할 때 사용하는 mysql connection string을 설정)
+// DB �ʱ�ȭ (DB�� ������ �� ����ϴ� mysql connection string�� ����)
 Database.Init(app.Configuration);
 
 app.Run();
