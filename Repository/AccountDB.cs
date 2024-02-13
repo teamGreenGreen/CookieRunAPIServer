@@ -4,7 +4,7 @@ using MySqlConnector;
 using SqlKata.Execution;
 using System.Data;
 
-namespace Web_API_Server.Repository;
+namespace API_Game_Server.Repository;
 
 public class AccountDB : IDisposable
 {
