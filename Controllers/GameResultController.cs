@@ -1,15 +1,6 @@
-﻿using SqlKata;
-using SqlKata.Execution;
-using System.Data.SqlClient;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MySqlConnector;
-using Humanizer.Localisation;
-using System.Diagnostics;
-using System.Numerics;
-using System.Text.RegularExpressions;
 using Microsoft.VisualBasic.FileIO;
-using System.Collections.Generic;
+using API_Game_Server.Repository;
 
 namespace Controllers;
 
@@ -36,13 +27,14 @@ public class GameResultController : ControllerBase
 
     private readonly Dictionary<int/*ItemID*/, ItemData> itemData = new Dictionary<int, ItemData>();
     private readonly Dictionary<int/*Level*/, UserLevelData> userLevelData = new Dictionary<int, UserLevelData>();
-    private readonly QueryFactory queryFactory;
-    private readonly int maxLevel = 3;
     private readonly int maxMoney = 99999;
+    private readonly int speed = 10;
+    private readonly int offset = 1;
+    private readonly GameDB gameDB;
 
-    public GameResultController(QueryFactory queryFactory)
+    public GameResultController(GameDB _gameDB)
     {
-        this.queryFactory = queryFactory;
+        gameDB = _gameDB;
         ReadItemData();
         ReadUserLevelData();
     }
@@ -51,25 +43,29 @@ public class GameResultController : ControllerBase
     public async Task<ActionResult<GameResultRes>> PostAsync(GameResultReq req)
     {
         // 게임이 종료돼서 클라이언트에서 요청이 들어옴
-        string? userId = req.UserId;
+        int userId = req.UserId;
         TimeSpan? playTime = req.PlayTime;
         Dictionary<int/*jellyID*/, int/*jellyCount*/>? items = req.Items;
+        uint score = req.Score;
+        uint money = req.Money;
+        int xPos = req.XPos;
 
         // Null 값이 있으면 return 함
         if (userId == null || playTime == null) return BadRequest();
 
         // DB에서 현재 유저 정보를 가져올건데 아이디, 레벨, 경험치, 코인, 최고 점수을 가져올거임
-        var userInfo = await queryFactory.Query("ChoAccount")
-            .Select("Id", "Level", "Exp", "MoneyPoint", "MaxScore")
-            .Where("Id", userId)
-            .FirstOrDefaultAsync<TestUserInfo>();
+        TestUserInfo userinfo = await gameDB.GetUserInfo(userId);
 
         // 정보 없으면 못찾은거임 -> return
-        if (userInfo == null) 
+        if (userinfo == null)
             return NotFound();
 
-        // 찾았으면 플레이 타임 검증
-        // 검증은 어떤 식으로 해야하지?
+        // 플레이 타임 검증
+        int elapsedTime = (int)playTime.Value.TotalSeconds;
+        if (xPos > (elapsedTime + offset) * speed)
+        {
+            return StatusCode(501, $"Unreasonable Player Movement Detected");
+        }
 
         // 경험치 추가, 재화 추가
         int totalScorePoint = 0;
@@ -82,59 +78,53 @@ public class GameResultController : ControllerBase
             totalMoneyPoint += itemData[itemId].MoneyPoint * count;
         }
 
+        if (score != totalScorePoint || money != totalMoneyPoint)
+        {
+            return StatusCode(501, $"Manipulated the score or money");
+        }
+
+        int newMoneyPoint = (userinfo.Money + totalMoneyPoint) < maxMoney ? userinfo.Money + totalMoneyPoint : maxMoney;
+
+        int newExp = userinfo.Exp + totalScorePoint;
+
         // 만약 레벨 업이 가능하면 레벨 업
-        int newMoneyPoint = userInfo.MoneyPoint += totalMoneyPoint;
-        int newExp = userInfo.Exp + totalScorePoint;
-        int newLevel = userInfo.Level;
+        int newLevel = userinfo.Level;
 
         for (int level = newLevel; level <= userLevelData.Count; level++)
         {
             if (newExp < userLevelData[level].MinExp)
             {
-                newLevel = level;
+                newLevel = level - 1;
                 break;
             }
         }
 
         // 최고 점수 보다 현재 점수가 높으면 최고 점수 갱신
-        int newMaxScore = userInfo.MaxScore;
-        if(userInfo.MaxScore < totalScorePoint)
+        int newMaxScore = userinfo.MaxScore;
+        if (userinfo.MaxScore < totalScorePoint)
         {
             newMaxScore = totalScorePoint;
             // TODO : 준철님 여기서 최고 점수 갱신됩니다. 랭킹 작업 시 참고하세유
         }
 
         // DB 저장 -> Redis로 수정하기
-        if (newMoneyPoint != userInfo.MoneyPoint || newExp != userInfo.Exp || newLevel != userInfo.Level || newMaxScore != userInfo.MaxScore)
+        if (newMoneyPoint != userinfo.Money || newExp != userinfo.Exp || newLevel != userinfo.Level || newMaxScore != userinfo.MaxScore)
         {
             // 업데이트할 데이터
-            var dataToUpdate = new
+            object dataToUpdate = new
             {
                 Level = newLevel,
                 Exp = newExp,
-                MoneyPoint = newMoneyPoint,
-                MaxScore = newMaxScore
+                Money = newMoneyPoint,
+                Max_Score = newMaxScore
             };
 
-            // SQLKata 쿼리 생성
-            Query query = new Query("ChoAccount").Where("Id", userInfo.Id).AsUpdate(dataToUpdate);
-
-            try
-            {
-                // 쿼리 실행
-                int affectedRows = await queryFactory.ExecuteAsync(query);
-
-                Console.WriteLine($"Affected Rows: {affectedRows}");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Failed to save data: {ex.Message}");
-            }
+            gameDB.ChangeDB(userId, dataToUpdate);
         }
 
         GameResultRes response = new GameResultRes()
         {
-            MoneyPoint = newMoneyPoint,
+            Money = newMoneyPoint,
             Level = newLevel,
             Exp = newExp,
             MaxScore = newMaxScore
