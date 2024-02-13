@@ -15,6 +15,7 @@ builder.Services.Configure<DBConfig>(configuration.GetSection(nameof(DBConfig)))
 
 // Add services to the container.
 builder.Services.AddTransient<AccountDB>();
+builder.Services.AddTransient<GameDB>();
 // Add services about redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(opt =>
     ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));
