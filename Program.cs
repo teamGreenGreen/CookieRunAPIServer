@@ -9,11 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 IConfiguration configuration = builder.Configuration;
 
-// DB ¿¬°á ¼³Á¤À» Á¾¼Ó¼º ÁÖÀÔÀ¸·Î ³Ö¾îÁÖ±â À§ÇÔ
+// DB ì—°ê²° ì„¤ì •ì„ ì¢…ì†ì„± ì£¼ì…ìœ¼ë¡œ ë„£ì–´ì£¼ê¸° ìœ„í•¨
 builder.Services.Configure<DBConfig>(configuration.GetSection(nameof(DBConfig)));
 
 // Add services to the container.
 builder.Services.AddTransient<AccountDB>();
+builder.Services.AddTransient<GameDB>();
 builder.Services.AddControllers();
 builder.Services.AddScoped<QueryFactory>(provider => {
     return new QueryFactory(Database.GetMySqlConnetion().Result, new MySqlCompiler());
@@ -28,7 +29,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// DB ÃÊ±âÈ­ (DB¿¡ ¿¬°áÇÒ ¶§ »ç¿ëÇÏ´Â mysql connection stringÀ» ¼³Á¤)
+// DB ì´ˆê¸°í™” (DBì— ì—°ê²°í•  ë•Œ ì‚¬ìš©í•˜ëŠ” mysql connection stringì„ ì„¤ì •)
 Database.Init(app.Configuration);
 
 app.Run();
