@@ -20,6 +20,10 @@ namespace API_Game_Server.Controllers
         public async Task<ActionResult> Get(string UserName)
         {
             var result = await _db.GetZsetRank("rank", UserName);
+            if (result == null)
+            {
+                return BadRequest();
+            }
             return Ok((result+1).ToString());
         }
         // 유저의 점수를 업로드하면, Redis의 Sorted Set에 정렬된다.
