@@ -4,16 +4,21 @@ using SqlKata.Compilers;
 using SqlKata.Execution;
 using API_Game_Server;
 using API_Game_Server.Repository;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
 IConfiguration configuration = builder.Configuration;
 
-// DB ¿¬°á ¼³Á¤À» Á¾¼Ó¼º ÁÖÀÔÀ¸·Î ³Ö¾îÁÖ±â À§ÇÔ
+// DB ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ó¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½
 builder.Services.Configure<DBConfig>(configuration.GetSection(nameof(DBConfig)));
 
 // Add services to the container.
 builder.Services.AddTransient<AccountDB>();
+// Add services about redis
+builder.Services.AddSingleton<IConnectionMultiplexer>(opt =>
+    ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));
+builder.Services.AddScoped<RedisDB>();
 builder.Services.AddControllers();
 builder.Services.AddScoped<QueryFactory>(provider => {
     return new QueryFactory(Database.GetMySqlConnetion().Result, new MySqlCompiler());
@@ -28,7 +33,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// DB ÃÊ±âÈ­ (DB¿¡ ¿¬°áÇÒ ¶§ »ç¿ëÇÏ´Â mysql connection stringÀ» ¼³Á¤)
+// DB ï¿½Ê±ï¿½È­ (DBï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ mysql connection stringï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 Database.Init(app.Configuration);
 
 app.Run();

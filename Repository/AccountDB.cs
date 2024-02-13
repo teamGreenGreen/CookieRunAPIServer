@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
 using SqlKata.Execution;
