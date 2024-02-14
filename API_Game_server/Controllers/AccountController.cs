@@ -23,7 +23,7 @@ public class AccountController : ControllerBase
         AccountRes response = new AccountRes();
 
         UserInfo userInfo = await accountDB.GetUserInfo(id);
-        response.LogindId = userInfo.Login_Id;
+        response.LogindId = userInfo.LoginId;
         response.CreatedAt = userInfo.CreatedAt;
 
         return response;
@@ -37,7 +37,7 @@ public class AccountController : ControllerBase
         using (MySqlConnection connection = await Database.GetMySqlConnetion())
         {
             UserInfo userInfo = new UserInfo();
-            userInfo.Login_Id = request.LoginId;
+            userInfo.LoginId = request.LoginId;
             userInfo.Password = request.Password;
 
             await connection.QueryFirstOrDefaultAsync<int>(

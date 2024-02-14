@@ -16,7 +16,7 @@ public class AccountRes
 public class UserInfo
 {
     public int Id { get; set; }
-    public string Login_Id { get; set; }
+    public string LoginId { get; set; }
     public string Password { get; set; }
     public DateTime CreatedAt { get; set; }
 }
