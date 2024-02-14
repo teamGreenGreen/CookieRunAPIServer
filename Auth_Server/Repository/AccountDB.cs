@@ -1,3 +1,4 @@
+using Auth_Server.DAO;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
 using SqlKata.Execution;
@@ -25,5 +26,22 @@ public class AccountDB : IDisposable
     public void Dispose()
     {
         dbConnection.Close();
+    }
+
+    public async Task<EErrorCode> CreateAccountAsync(string accountName, string password)
+    {
+        string saltValue = "1234";
+        string hashingPassword = password;
+
+        object account = new
+        {
+            account_name = accountName,
+            salt_value = saltValue,
+            password = hashingPassword
+        };
+
+        int count = await queryFactory.Query("ACCOUNT").InsertAsync(account);
+
+        return count == 1 ? EErrorCode.None : EErrorCode.CreateAccountFail;
     }
 }

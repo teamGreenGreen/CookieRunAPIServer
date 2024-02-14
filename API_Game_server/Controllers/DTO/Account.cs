@@ -1,4 +1,4 @@
-﻿// 요청 데이터
+// 요청 데이터
 public class AccountReq
 {
     public string LoginId { get; set; }
