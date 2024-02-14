@@ -2,7 +2,9 @@ public enum EErrorCode
 {
     None = 0,
     
-    AuthCheckFail = 101,
-    CreateAccountFail = 102,
-    Login_Fail = 103,
+    // 1001~2000 Account
+    AuthCheckFail = 1001,
+    CreateAccountFail = 1002,
+    LoginFailUserNotExist = 1003,
+    LoginFailPwNotMatch = 1004,
 }

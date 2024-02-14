@@ -30,6 +30,7 @@ public class AccountDB : IDisposable
 
     public async Task<EErrorCode> CreateAccountAsync(string accountName, string password)
     {
+        // 해시 함수 적용 필요
         string saltValue = "1234";
         string hashingPassword = password;
 
@@ -43,5 +44,19 @@ public class AccountDB : IDisposable
         int count = await queryFactory.Query("ACCOUNT").InsertAsync(account);
 
         return count == 1 ? EErrorCode.None : EErrorCode.CreateAccountFail;
+    }
+
+    public async Task<(EErrorCode, Int64)> VerifyUser(string accountName, string password)
+    {
+        Account userAccount = await queryFactory.Query("ACCOUNT")
+            .Where("account_name", accountName)
+            .FirstOrDefaultAsync<Account>();
+
+        if (userAccount is null)
+        {
+            return (EErrorCode.LoginFailUserNotExist, 0);
+        }
+
+        return (EErrorCode.None, userAccount.Uid);
     }
 }
