@@ -1,4 +1,4 @@
-using Auth_Server.DTO;
+using Auth_Server.Model.DTO;
 using Auth_Server.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

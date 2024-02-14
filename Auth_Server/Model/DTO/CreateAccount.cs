@@ -1,4 +1,4 @@
-namespace Auth_Server.DTO;
+namespace Auth_Server.Model.DTO;
 
 public class CreateAccountReq
 {

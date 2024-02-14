@@ -1,4 +1,4 @@
-using Auth_Server.DAO;
+using Auth_Server.Model.DAO;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
 using SqlKata.Execution;
