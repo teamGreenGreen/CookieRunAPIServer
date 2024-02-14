@@ -1,12 +1,7 @@
 using System.ComponentModel;
 
-namespace API_Game_Server.Controllers.DTO
+namespace API_Game_Server.Model.DAO
 {
-    public class FriendAddReq
-    {
-        public string FromUserName {  get; set; }
-        public string ToUserName { get; set; }
-    }
     public class FriendInfo
     {
         public string UserName { get; set; }

@@ -1,4 +1,5 @@
-using API_Game_Server.Controllers.DTO;
+using API_Game_Server.Model.DTO;
+using API_Game_Server.Model.DAO;
 using API_Game_Server.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,7 @@ namespace API_Game_Server.Controllers
             logger = _logger;
         }
         [HttpPost("addrequest")]
-        public async Task<ActionResult> AddRequest(FriendAddReq req)
+        public async Task<ActionResult> AddRequest(FriendRequestReq req)
         {
             // 자기 자신의 이름인지 확인
             if (req.ToUserName == req.FromUserName) // 보내는 username과 받는 username이 동일하면 자기가 자기한테 친구 신청

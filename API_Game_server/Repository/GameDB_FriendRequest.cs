@@ -1,4 +1,5 @@
-using API_Game_Server.Controllers.DTO;
+using API_Game_Server.Model.DTO;
+using API_Game_Server.Model.DAO;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
 using SqlKata;

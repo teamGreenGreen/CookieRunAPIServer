@@ -1,3 +1,5 @@
+using API_Game_Server.Model.DTO;
+using API_Game_Server.Model.DAO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic.FileIO;
 using API_Game_Server.Repository;
