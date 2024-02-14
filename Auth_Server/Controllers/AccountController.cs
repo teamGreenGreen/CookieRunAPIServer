@@ -32,6 +32,8 @@ public class AccountController : ControllerBase
     public async Task<LoginAccountRes> Login(LoginAccountReq request)
     {
         LoginAccountRes response = new();
+        (response.Result, response.Uid) = await accountDb.VerifyUser(request.AccountName, request.Password);
+        response.AuthToken = "1234"; // 해쉬 생성하는 함수 추가 예정
 
         return response;
     }
