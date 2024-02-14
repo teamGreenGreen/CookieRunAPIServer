@@ -31,10 +31,12 @@ public class GameResultController : ControllerBase
     private readonly int speed = 10;
     private readonly int offset = 1;
     private readonly GameDB gameDB;
+    private readonly RedisDB redisDB;
 
-    public GameResultController(GameDB _gameDB)
+    public GameResultController(GameDB _gameDB, RedisDB _redisDB)
     {
         gameDB = _gameDB;
+        redisDB = _redisDB;
         ReadItemData();
         ReadUserLevelData();
     }
@@ -104,7 +106,8 @@ public class GameResultController : ControllerBase
         if (userinfo.MaxScore < totalScorePoint)
         {
             newMaxScore = totalScorePoint;
-            // TODO : 준철님 여기서 최고 점수 갱신됩니다. 랭킹 작업 시 참고하세유
+            // Redis 랭킹 업데이트
+            await redisDB.SetZset("rank", userinfo.UserName, req.Score);
         }
 
         // DB 저장 -> Redis로 수정하기

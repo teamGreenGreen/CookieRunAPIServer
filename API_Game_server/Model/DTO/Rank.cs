@@ -1,14 +1,18 @@
 using System.ComponentModel;
 
-namespace API_Game_Server.Model.DTO
+namespace API_Game_Server.Controllers.DTO
 {
-    public class RankReq
+    public class RankUpdateReq
     {
-        public string UserName { get; set; }
+        public string UserName {  get; set; }
         public double Score { get; set; }
     }
-    public class RanksReq
+    public class RanksGetReq
+    { 
+        public int Page {  get; set; } 
+    }
+    public class RankGetReq
     {
-        public int Page { get; set; }
+        public string UserName { get; set; }
     }
 }
