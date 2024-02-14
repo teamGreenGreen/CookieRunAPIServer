@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Auth_Server.Controllers;
 
-[Route("[controller]")]
 [ApiController]
+[Route("[controller]")]
 public class AccountController : ControllerBase
 {
     private readonly AccountDB accountDb;
@@ -16,18 +16,20 @@ public class AccountController : ControllerBase
         this.accountDb = accountDb;
     }
 
-    [Route("/Create")]
+    [Route("Create")]
     [HttpPost]
-    public async Task<CreateAccountRes> Create(CreateAccountReq registerRequest)
+    public async Task<CreateAccountRes> Create(CreateAccountReq request)
     {
         CreateAccountRes response = new();
+
+        response.Result = await accountDb.CreateAccountAsync(request.AccountName, request.Password);
 
         return response;
     }
 
-    [Route("/Login")]
+    [Route("Login")]
     [HttpPost]
-    public async Task<LoginAccountRes> Create(LoginAccountReq registerRequest)
+    public async Task<LoginAccountRes> Login(LoginAccountReq request)
     {
         LoginAccountRes response = new();
 
