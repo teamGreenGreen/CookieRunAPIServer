@@ -26,4 +26,5 @@ public class TestUserInfo
     public int Exp { get; set; }
     public int Money{ get; set; }
     public int MaxScore { get; set; }
+    public string UserName { get; set; }
 }
