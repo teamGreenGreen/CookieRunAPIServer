@@ -41,7 +41,7 @@ public class AccountController : ControllerBase
             userInfo.Password = request.Password;
 
             await connection.QueryFirstOrDefaultAsync<int>(
-                "INSERT INTO Account(LoginId,SaltValue,HashedPassword) Values(@Login_Id, @Password, @Password);", userInfo);
+                "INSERT INTO Account(LoginId,SaltValue,HashedPassword) Values(@LoginId, @Password, @Password);", userInfo);
         }
 
         return response;
