@@ -17,14 +17,6 @@ public partial class GameDB : IDisposable
         .Where("user_name", friendName)
         .FirstOrDefaultAsync<FriendInfo>();
     }
-    public async Task<FriendShipInfo> GetFriendShipInfo(string myName, string friendName)
-    {
-        return await queryFactory.Query("FRIEND_RELATIONSHIP")
-        .Select("from_user_name as FromUserName","to_user_name as ToUserName")
-        .Where("from_user_name", myName)
-        .Where("to_user_name", friendName)
-        .FirstOrDefaultAsync<FriendShipInfo>();
-    }
     public async Task<FriendRequestInfo> GetFriendRequestInfo(string myName, string friendName)
     {
         return await queryFactory.Query("FRIEND_REQUEST")
@@ -33,14 +25,6 @@ public partial class GameDB : IDisposable
         .Where("to_user_name", friendName)
         .FirstOrDefaultAsync<FriendRequestInfo>();
     }
-    public async Task<FriendCountInfo> GetMyFriendCountInfo(string myName)
-    {
-        return await queryFactory.Query("USER_INFO")
-        .Select("friend_count as FriendCount")
-        .Where("user_name",myName)
-        .FirstOrDefaultAsync<FriendCountInfo>();
-    }
-
     public async Task<ReverseFriendShipInfo> GetReverseFriendShipInfo(string myName, string friendName)
     {
         return await queryFactory.Query("FRIEND_REQUSET")
@@ -49,15 +33,19 @@ public partial class GameDB : IDisposable
         .Where("to_user_name", myName)
         .FirstOrDefaultAsync<ReverseFriendShipInfo>();
     }
-
-    public async Task InsertFriendRequest(string myName, string friendName)
+    public async Task InsertFriendShip(string myName, string friendName)
     {
-        var friendshipData = new []
+        var friendshipData = new[]
         {
             new {from_user_name = myName, to_user_name = friendName},
             new {from_user_name = friendName, to_user_name = myName}
         };
 
-        await queryFactory.Query("FRIEND_REQUEST").InsertAsync(friendshipData);
+        await queryFactory.Query("FRIEND_RELATIONSHIP").InsertAsync(friendshipData);
+    }
+
+    public async Task InsertFriendRequest(string myName, string friendName)
+    {
+        await queryFactory.Query("FRIEND_REQUEST").InsertAsync(new { from_user_name = myName, to_user_name = friendName });
     }
 }

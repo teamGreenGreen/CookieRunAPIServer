@@ -21,6 +21,11 @@ namespace API_Game_Server.Repository
         // 싱글 스레드 환경에서 SetMembers를 하게되면 해당 순회를 하는 동안
         // 다른 요청이 Block되는 문제가 있다.
         // 이를 해결하기 위해서 SSCAN을 사용한다.
+        public async Task<bool> GetSetIsMemberExist(string key, string value)
+        {
+            bool result = await _db.SetContainsAsync(key, value);
+            return result;
+        }
         public async Task<string[]> GetSetMembers(string key)
         {
             IAsyncEnumerable<RedisValue> result = _db.SetScanAsync(key);

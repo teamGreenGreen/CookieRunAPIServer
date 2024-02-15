@@ -12,8 +12,7 @@ namespace API_Game_Server.Model.DAO
     }
     public class FriendShipInfo
     {
-        public string FromUserName { get; set; }
-        public string ToUserName { get; set; }
+        public bool IsExist { get; set; }
     }
     public class FriendRequestInfo
     {
@@ -22,7 +21,7 @@ namespace API_Game_Server.Model.DAO
     }
     public class FriendCountInfo
     {
-        public int FriendCount { get; }
+        public long FriendCount { get; set; }
     }
     public class ReverseFriendShipInfo
     {
