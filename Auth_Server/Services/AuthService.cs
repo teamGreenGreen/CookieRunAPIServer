@@ -28,7 +28,7 @@ public class AuthService
     {
         LoginAccountRes response = new();
 
-        Account? account = await accountDb.GetAccount(userName, password);
+        Account account = await accountDb.GetAccount(userName, password);
         if (account is null)
         {
             response.Result = EErrorCode.LoginFailUserNotExist;

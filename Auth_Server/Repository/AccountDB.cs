@@ -41,7 +41,7 @@ public class AccountDB : IDisposable
         return await queryFactory.Query("ACCOUNT").InsertAsync(account);
     }
 
-    public async Task<Account?> GetAccount(string userName, string password)
+    public async Task<Account> GetAccount(string userName, string password)
     {
         return await queryFactory.Query("ACCOUNT")
             .Where("user_name", userName)
