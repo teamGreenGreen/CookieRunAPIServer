@@ -1,6 +1,7 @@
 using API_Game_Server.Repository;
 using API_Game_Server.Model.DTO;
 using API_Game_Server.Model.DAO;
+using System;
 
 namespace API_Game_Server.Services
 {
@@ -17,15 +18,17 @@ namespace API_Game_Server.Services
         }
         public async Task<EErrorCode> FriendRequest(string Token, string ToUserName)
         {
-            string myUid = await validationService.GetUid(Token);
+            string tokenKey = string.Format("token:{0}",Token);
+            string myUid = await validationService.GetUid(tokenKey);
             // 유효하지 않은 토큰이면
             if(myUid == "")
             {
                 return EErrorCode.InvalidToken;
             }
 
-            string[] userName = {"userName"};
-            string[] arrMyName = await redisDB.GetHash(myUid, userName); // 받아올 칼럼명을 프로퍼티명으로 전달
+            string uidKey = string.Format("user_info:uid:{0}", myUid);
+            string[] arrUidValues = {"user_name"};
+            string[] arrMyName = await redisDB.GetHash(uidKey, arrUidValues); // 받아올 칼럼명을 프로퍼티명으로 전달
             string myName = arrMyName[0];
 
             // 자기 자신의 이름인지 확인
@@ -33,8 +36,6 @@ namespace API_Game_Server.Services
             {
                 return EErrorCode.FriendReqFailSelfRequest;
             }
-
-            return EErrorCode.None;
 
             // ToUserName의 유저가 존재하는지 확인
             FriendInfo myFriendInfo = await gameDB.GetFriendInfo(ToUserName);
@@ -44,7 +45,9 @@ namespace API_Game_Server.Services
             }
 
             // 이미 친구인지 확인
-            FriendShipInfo friendshipInfo = await gameDB.GetFriendShipInfo(myName, ToUserName);
+            string friendshipKey = string.Format("friend_relationship:{0}",ToUserName);
+            FriendShipInfo friendshipInfo = new FriendShipInfo();
+            friendshipInfo.IsExist = await redisDB.GetSetIsMemberExist(friendshipKey, ToUserName);
             if(friendshipInfo != null)
             {
                 return EErrorCode.FriendReqFailAlreadyFriend;
@@ -58,18 +61,25 @@ namespace API_Game_Server.Services
             }
 
             // 최대 친구 수 초과 확인
-            FriendCountInfo myFriendCount = await gameDB.GetMyFriendCountInfo(myName);
-            if(myFriendCount.FriendCount >= 50)
+            string myFriendCountKey = string.Format("friend_relationship:{0}",myName);
+            FriendCountInfo myFriendCount = new FriendCountInfo();
+            myFriendCount.FriendCount = await redisDB.SizeOfSet(myFriendCountKey);
+            if(myFriendCount.FriendCount >= 5) // Test를 위해 최대 친구 수 5로 수정 -> 나중에 50으로 바꿀 예정
             {
                 return EErrorCode.FriendReqFailMyFriendCountExceeded;
             }
 
-            // // 역방향 신청 존재하는지 확인
-            
+            // 역방향 신청 존재하는지 확인
+            ReverseFriendShipInfo reverseFriendShipInfo = await gameDB.GetReverseFriendShipInfo(myName, ToUserName);
+            if(reverseFriendShipInfo != null)
+            {
+                await gameDB.InsertFriendShip(myName,ToUserName);
+                return EErrorCode.None;
+            }
 
-            // // 신청이 완료된 경우
-            // await gameDB.InsertFriendRequest(req.FromUserName, req.ToUserName);
-            // return Ok(new {Message = "친구 신청이 성공적으로 처리되었습니다."});
+            // 신청이 완료된 경우
+            await gameDB.InsertFriendRequest(myName, ToUserName); // DB에 작성
+            return EErrorCode.None;
         }
     }
 }
