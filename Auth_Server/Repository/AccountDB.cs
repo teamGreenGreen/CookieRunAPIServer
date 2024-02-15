@@ -1,3 +1,4 @@
+using API_Game_Server;
 using Auth_Server.Model.DAO;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
@@ -28,15 +29,15 @@ public class AccountDB : IDisposable
         dbConnection.Close();
     }
 
-    public async Task<EErrorCode> CreateAccountAsync(string accountName, string password)
+    public async Task<EErrorCode> CreateAccountAsync(string userName, string password)
     {
-        // 해시 함수 적용 필요
-        string saltValue = "1234";
-        string hashingPassword = password;
+        // 해시 함수 적용 예정
+        string saltValue = Security.GenerateSaltString();
+        string hashingPassword = Security.GenerateHashingPassword(saltValue, password);
 
         object account = new
         {
-            account_name = accountName,
+            user_name = userName,
             salt_value = saltValue,
             password = hashingPassword
         };
@@ -46,17 +47,18 @@ public class AccountDB : IDisposable
         return count == 1 ? EErrorCode.None : EErrorCode.CreateAccountFail;
     }
 
-    public async Task<(EErrorCode, Int64)> VerifyUser(string accountName, string password)
+    public async Task<(EErrorCode, Account?)> VerifyUser(string userName, string password)
     {
         Account userAccount = await queryFactory.Query("ACCOUNT")
-            .Where("account_name", accountName)
+            .Where("user_name", userName)
+            .Select("user_name AS UserName", "password", "uid")
             .FirstOrDefaultAsync<Account>();
 
         if (userAccount is null)
         {
-            return (EErrorCode.LoginFailUserNotExist, 0);
+            return (EErrorCode.LoginFailUserNotExist, null);
         }
 
-        return (EErrorCode.None, userAccount.Uid);
+        return (EErrorCode.None, userAccount);
     }
 }
