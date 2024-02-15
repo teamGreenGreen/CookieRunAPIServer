@@ -29,7 +29,7 @@ public class AccountDB : IDisposable
         dbConnection.Close();
     }
 
-    public async Task<EErrorCode> CreateAccountAsync(string accountName, string password)
+    public async Task<EErrorCode> CreateAccountAsync(string userName, string password)
     {
         // 해시 함수 적용 예정
         string saltValue = Security.GenerateSaltString();
@@ -37,7 +37,7 @@ public class AccountDB : IDisposable
 
         object account = new
         {
-            account_name = accountName,
+            user_name = userName,
             salt_value = saltValue,
             password = hashingPassword
         };
@@ -47,11 +47,11 @@ public class AccountDB : IDisposable
         return count == 1 ? EErrorCode.None : EErrorCode.CreateAccountFail;
     }
 
-    public async Task<(EErrorCode, Account?)> VerifyUser(string accountName, string password)
+    public async Task<(EErrorCode, Account?)> VerifyUser(string userName, string password)
     {
         Account userAccount = await queryFactory.Query("ACCOUNT")
-            .Where("account_name", accountName)
-            .Select("account_name AS AccountName", "password", "uid")
+            .Where("user_name", userName)
+            .Select("user_name AS UserName", "password", "uid")
             .FirstOrDefaultAsync<Account>();
 
         if (userAccount is null)
