@@ -49,7 +49,7 @@ namespace API_Game_Server.Controllers
         }
 
         // 전체 랭크의 개수를 반환한다.
-        // 클라이언트가 전체 랭킹을 조회할 때, 마지막 페이지를 명시할 때 사용된다.
+        // 클라이언트가 전체 랭킹을 조회할 때, 마지막 페이지를 명시하기위해 사용된다.
         [HttpPost("size-rank")]
         public async Task<ActionResult> SizeRank()
         {
@@ -70,16 +70,41 @@ namespace API_Game_Server.Controllers
         [HttpPost("hash-set")]
         public async Task SetHashTest(TestUserInfo TestUserInfo)
         {
-            string token = "1";
-            await _db.SetHash(token, TestUserInfo);
+            string uid = "1";
+            // _db.SetHash에 uid와 인스턴스를 넘기면, 인스턴스가 가지고 있는 프로퍼티를 기준으로 필드와 멤버를 Hash 데이터로 저장한다.
+            await _db.SetHash(uid, TestUserInfo);
         }
 
         [HttpPost("hash-get")]
         public async Task<ActionResult<RedisValue>> GetHashTest()
         {
-            string token = "1";
-            List<string> strings = new List<string>(){ "Id", "Level", "UserName" };
-            RedisValue[]  result = await _db.GetHash(token, strings);
+            string uid = "1";
+            string[] strings = new string[] { "Id", "Level", "UserName" };
+            // _db.GetHash에 uid와 조회하고자 하는 필드명을 string[] 형태로 넘기면, 필드에 해당하는 값들을 string[]형태로 반환한다.
+            string[]  result = await _db.GetHash(uid, strings);
+            return Ok(result);
+        }
+        [HttpPost("set-get")]
+        public async Task<ActionResult> GetSetMembers()
+        {
+            // _db.GetMembers에 key를 넘기면, SSAN을 호출하여 멤버들을 string[] 형태로 반환한다.
+            string[] result = await _db.GetSetMembers("mykey");
+            return Ok(result);
+        }
+        [HttpPost("add-set")]
+        public async Task<ActionResult> AddSetMembers()
+        {
+            // key와 member를 넘기면, 해당 값을 추가한다. 성공시 true를 반환한다.
+            bool result = await _db.AddSetElement("mykey","1159");
+            return Ok(result);
+        }
+        [HttpPost("delete-set")]
+        public async Task<ActionResult> DeleteSetMembers()
+        {
+            // key와 member를 넘기면, 해당 member를 삭제한다.
+            // true : 삭제 성공
+            // false : 존재하지 않는 멤버
+            bool result = await _db.DeleteMember("mykey", "1159");
             return Ok(result);
         }
     }
