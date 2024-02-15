@@ -41,4 +41,14 @@ public class AuthService
         return response;
     }
 
+    public async Task<EErrorCode> VerifyToken(string authToken, Int64 uid)
+    {
+        string saltValue = await accountDb.GetSaltValue(uid);
+
+        if (authToken == Security.GenerateAuthToken(saltValue, uid))
+            return EErrorCode.None;
+        else
+            return EErrorCode.VerifyTokenFail;
+    }
+
 }
