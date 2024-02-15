@@ -10,18 +10,23 @@ namespace API_Game_Server.Repository;
 
 public partial class GameDB : IDisposable
 {
-    public async Task<TestUserInfo> GetUserInfo(int id)
+    public async Task<ResultUserInfo> GetUserInfo(long id)
     {
         return await queryFactory.Query("USER_INFO") 
-        .Select("Id", "Level", "Exp", "Money", "Max_Score")
-        .Where("Id", id)
-        .FirstOrDefaultAsync<TestUserInfo>();
+        .Select("uid", "level", "exp", "money", "max_score as MaxScore", "user_name as UserName")
+        .Where("uid", id)
+        .FirstOrDefaultAsync<ResultUserInfo>();
     }
 
-    public async void ChangeDB(int id, object obj)
+    public async void ChangeDB(long id, int newLevel, int newExp, int newMoneyPoint, int newMaxScore)
     {
         // SQLKata 쿼리 생성
-        Query query = new Query("USER_INFO").Where("Id", id).AsUpdate(obj);
-        await queryFactory.ExecuteAsync(query);
+        await queryFactory.Query("USER_INFO").Where("uid", id).UpdateAsync(new
+        {
+            level = newLevel,
+            exp = newExp,
+            money = newMoneyPoint,
+            max_score = newMaxScore
+        });
     }
 }

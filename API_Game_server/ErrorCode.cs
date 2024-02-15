@@ -1,4 +1,4 @@
-﻿public enum EErrorCode
+public enum EErrorCode
 {
     None = 0,
     InvalidToken = 1,
@@ -17,5 +17,10 @@
     // 친구 신청 수락 실패
     FriendReqAcceptFailMyFriendCountExceeded = 2005,
     FriendReqAccepyFailTargetFriendCountExceeded = 2006,
+
+    // GameResult 3000~3999
+    
+    PlayerSpeedChangedDetected = 3000,
+    MoneyOrExpChangedDetected = 3001,
 
 }

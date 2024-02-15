@@ -11,7 +11,8 @@ namespace API_Game_Server.Services
         }
         public async Task<string> GetUid(string Token)
         {
-            string myUid = await redisDB.GetString(Token);
+            string tokenKey = string.Format("token:{0}", Token);
+            string myUid = await redisDB.GetString(tokenKey);
             return myUid;
         }
     }
