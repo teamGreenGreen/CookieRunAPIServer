@@ -24,7 +24,7 @@ public class AccountController : ControllerBase
     {
         CreateAccountRes response = new();
 
-        response.Result = await accountDb.CreateAccountAsync(request.AccountName, request.Password);
+        response.Result = await accountDb.CreateAccountAsync(request.UserName, request.Password);
 
         return response;
     }
@@ -36,7 +36,7 @@ public class AccountController : ControllerBase
         LoginAccountRes response = new();
         Account? account;
 
-        (response.Result, account) = await accountDb.VerifyUser(request.AccountName, request.Password);
+        (response.Result, account) = await accountDb.VerifyUser(request.UserName, request.Password);
         if(account == null)
         {
             return response;
