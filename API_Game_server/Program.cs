@@ -20,6 +20,7 @@ builder.Services.AddTransient<GameDB>();
 builder.Services.AddTransient<ValidationService>();
 builder.Services.AddTransient<FriendRequestService>();
 builder.Services.AddTransient<GameResultService>();
+builder.Services.AddTransient<AttendanceService>();
 // Add services about redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(opt =>
     ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));
