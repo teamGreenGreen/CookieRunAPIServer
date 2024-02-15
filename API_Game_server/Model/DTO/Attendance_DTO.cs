@@ -7,6 +7,6 @@ namespace API_Game_Server.Model.DTO
     }
     public class AttendanceInfoReq
     {
-        public string Tocken { get; set; }
+        public string Token { get; set; }
     }
 }
