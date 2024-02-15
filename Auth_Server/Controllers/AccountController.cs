@@ -1,3 +1,5 @@
+using API_Game_Server;
+using Auth_Server.Model.DAO;
 using Auth_Server.Model.DTO;
 using Auth_Server.Repository;
 using Microsoft.AspNetCore.Http;
@@ -32,8 +34,16 @@ public class AccountController : ControllerBase
     public async Task<LoginAccountRes> Login(LoginAccountReq request)
     {
         LoginAccountRes response = new();
-        (response.Result, response.Uid) = await accountDb.VerifyUser(request.AccountName, request.Password);
-        response.AuthToken = "1234"; // 해쉬 생성하는 함수 추가 예정
+        Account? account;
+
+        (response.Result, account) = await accountDb.VerifyUser(request.AccountName, request.Password);
+        if(account == null)
+        {
+            return response;
+        }
+
+        response.AuthToken = Security.GenerateAuthToken(account.SaltValue, response.Uid); 
+        response.Uid = account.Uid;
 
         return response;
     }
