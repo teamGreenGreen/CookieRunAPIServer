@@ -68,7 +68,7 @@ namespace API_Game_Server.Controllers
         }
 
         [HttpPost("hash-set")]
-        public async Task SetHashTest(TestUserInfo TestUserInfo)
+        public async Task SetHashTest(ResultUserInfo TestUserInfo)
         {
             string uid = "1";
             // _db.SetHash에 uid와 인스턴스를 넘기면, 인스턴스가 가지고 있는 프로퍼티를 기준으로 필드와 멤버를 Hash 데이터로 저장한다.
