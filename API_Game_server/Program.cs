@@ -4,6 +4,7 @@ using SqlKata.Compilers;
 using SqlKata.Execution;
 using API_Game_Server;
 using API_Game_Server.Repository;
+using API_Game_Server.Services;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,9 @@ builder.Services.Configure<DBConfig>(configuration.GetSection(nameof(DBConfig)))
 // Add services to the container.
 builder.Services.AddTransient<AccountDB>();
 builder.Services.AddTransient<GameDB>();
+// services 종속성 주입 추가
+builder.Services.AddTransient<ValidationService>();
+builder.Services.AddTransient<FriendRequestService>();
 // Add services about redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(opt =>
     ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));
