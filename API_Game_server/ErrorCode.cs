@@ -23,4 +23,8 @@ public enum EErrorCode
     PlayerSpeedChangedDetected = 3000,
     MoneyOrExpChangedDetected = 3001,
 
+    // Attendance 4000~4999
+    AttendanceCountError = 4000,
+    AttendanceFailFindUser = 4001,
+    AttendanceFailSetString = 4002,
 }

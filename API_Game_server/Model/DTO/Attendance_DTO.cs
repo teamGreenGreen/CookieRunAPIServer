@@ -1,6 +1,6 @@
 namespace API_Game_Server.Model.DTO
 {
-    public class AttendanceInfoRes
+    public class AttendanceInfoRes : ErrorCodeDTO
     {
         public int RemainDays { get; set; }
         public int AttendanceCount { get; set; }
