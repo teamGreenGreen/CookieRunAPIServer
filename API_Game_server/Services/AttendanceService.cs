@@ -9,11 +9,12 @@ namespace API_Game_Server.Services
     {
         private readonly GameDB gameDB;
         private readonly RedisDB redisDB;
-
-        public AttendanceService(GameDB gameDB, RedisDB redisDB)
+        private readonly ValidationService validation;
+        public AttendanceService(GameDB gameDB, RedisDB redisDB, ValidationService validation)
         {
             this.gameDB = gameDB;
             this.redisDB = redisDB;
+            this.validation = validation;
         }
 
         // 서버에 기록되어있는 출석 시작 날짜 반환
@@ -73,7 +74,8 @@ namespace API_Game_Server.Services
         public async Task<int> GetUserAttendanceCount(AttendanceInfoReq req)
         {
             // 토큰으로 redis에서 유저 uid 조회
-            string redisResUid = await redisDB.GetString(req.Tocken);
+            string redisResUid = await validation.GetUid(req.Token);
+
             if (long.TryParse(redisResUid, out long uid))
             {
                 return -1;

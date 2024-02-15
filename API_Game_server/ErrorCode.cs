@@ -23,8 +23,13 @@ public enum EErrorCode
     PlayerSpeedChangedDetected = 3000,
     MoneyOrExpChangedDetected = 3001,
 
-    // Attendance 4000~4999
+    // Attendance 4000~4099
     AttendanceCountError = 4000,
     AttendanceFailFindUser = 4001,
     AttendanceFailSetString = 4002,
+
+    // Rank 4100 ~ 4199
+    IsNewbie = 4100,
+    RankersNotExist = 4101,
+    NoBodyInRanking = 4102,
 }

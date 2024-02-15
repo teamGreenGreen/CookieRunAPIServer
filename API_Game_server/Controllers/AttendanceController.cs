@@ -12,14 +12,10 @@ namespace API_Game_Server.Controllers
     public class AttendanceController : ControllerBase
     {
         private readonly AttendanceService service;
-        private readonly GameDB gameDB;
-        private readonly RedisDB redisDB;
         private readonly short maxDate = 32;
-        public AttendanceController(GameDB _gameDB, RedisDB _redisDB, AttendanceService _service)
+        public AttendanceController(AttendanceService _service)
         {
             service = _service;
-            gameDB = _gameDB;
-            redisDB = _redisDB;
         }
         // 유저가 출석부를 요청 -> 갱신까지 남은 날과 현재까지 출석한 수를 반환
         [HttpPost("get")]
