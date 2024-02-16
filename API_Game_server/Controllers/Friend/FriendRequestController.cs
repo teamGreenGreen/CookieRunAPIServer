@@ -16,7 +16,7 @@ namespace API_Game_Server.Controllers
         {
             friendRequestService = _friendRequestService;
         }
-        [HttpPost("addrequest")]
+        [HttpPost]
         public async Task<FriendRequestRes> AddRequest(FriendRequestReq req)
         {
             FriendRequestRes res = new FriendRequestRes();

@@ -7,6 +7,7 @@ public enum EErrorCode
     // Account 1000~1999    
     Create_Account_Fail = 1001,
     Login_Fail = 1002,
+    Auth_Fail_InvalidResponse = 1003,
 
     // Friend 2000~2999
     // 친구 신청 실패
@@ -17,7 +18,7 @@ public enum EErrorCode
     FriendReqFailMyFriendCountExceeded = 2004,
     // 친구 신청 수락 실패
     FriendReqAcceptFailMyFriendCountExceeded = 2005,
-    FriendReqAccepyFailTargetFriendCountExceeded = 2006,
+    FriendReqAcceptFailTargetFriendCountExceeded = 2006,
 
     // GameResult 3000~3099
     PlayerSpeedChangedDetected = 3000,

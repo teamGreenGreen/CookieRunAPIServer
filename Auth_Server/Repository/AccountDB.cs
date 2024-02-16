@@ -31,21 +31,27 @@ public class AccountDB : IDisposable
 
     public async Task<int> InsertAccountAsync(string userName, string saltValue, string hashingPassword)
     {
-        object account = new
+        return await queryFactory.Query("ACCOUNT").InsertAsync(new
         {
             user_name = userName,
             salt_value = saltValue,
             password = hashingPassword
-        };
-
-        return await queryFactory.Query("ACCOUNT").InsertAsync(account);
+        });
     }
 
     public async Task<Account> GetAccount(string userName, string password)
     {
         return await queryFactory.Query("ACCOUNT")
             .Where("user_name", userName)
-            .Select("user_name AS UserName", "password", "uid")
+            .Select("user_name AS UserName", "salt_value AS SaltValue", "Password", "Uid")
             .FirstOrDefaultAsync<Account>();
+    }
+
+    public async Task<string> GetSaltValue(Int64 uid)
+    {
+        return await queryFactory.Query("ACCOUNT")
+            .Where("uid", uid)
+            .Select("salt_value")
+            .FirstOrDefaultAsync<string>();
     }
 }

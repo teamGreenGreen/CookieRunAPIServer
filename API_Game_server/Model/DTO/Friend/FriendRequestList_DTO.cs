@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using API_Game_Server.Model.DAO;
 
 namespace API_Game_Server.Model.DTO
 {
@@ -8,14 +9,8 @@ namespace API_Game_Server.Model.DTO
         public string MyToken { get; set; }
     }
     // 응답 데이터
-    public class FriendRequestElement
-    {
-        public long RequestId { get; set; }
-        public string FromUserName { get; set; }
-        public string ToUserName { get; set; }
-    }
     public class FriendRequestListRes : ErrorCodeDTO
     {
-        public List<FriendRequestElement> FriendRequestList { get; set; }
+        public IEnumerable<FriendRequestElement> FriendRequestList { get; set; } // DAO의 친구 신청 요소로 이루어진 List를 반환
     }
 }
