@@ -81,7 +81,7 @@ namespace API_Game_Server.Services
                 await redisDB.AddSetElement(addElementKey1, toUserName); // redis 저장
                 await redisDB.AddSetElement(addElementKey2, myName); // redis 저장
                 await gameDB.DeleteFriendRequest(toUserName,myName); // 역방향 신청 삭제
-                return EErrorCode.ReverseMake;
+                return EErrorCode.None;
             }
 
             // 신청이 완료된 경우
