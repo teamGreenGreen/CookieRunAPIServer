@@ -35,8 +35,8 @@ public class AuthService
             return response;
         }
 
-        response.AuthToken = Security.GenerateAuthToken(account.SaltValue, response.Uid);
         response.Uid = account.Uid;
+        response.AuthToken = Security.GenerateAuthToken(account.SaltValue, response.Uid);
 
         return response;
     }
