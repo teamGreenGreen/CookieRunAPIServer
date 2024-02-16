@@ -112,12 +112,16 @@ namespace API_Game_Server.Services
         public DateTime? ReadData()
         {
             string filePath = "./Resources/AttendanceDate.csv";
+            // 파일이 존재하지 않으면 null 반환
+            if (!File.Exists(filePath)) return null;
+            // 파일이 존재한다면 파일 읽기
             string row = "";
             using (TextFieldParser parser = new TextFieldParser(filePath))
             {
                 // csv에 저장된 날짜 읽기
                 row = parser.ReadLine();
             }
+            // 데이터가 있으면 반환
             if (row != null) return Convert.ToDateTime(row);
             // 비어있으면 null 반환
             return null;
