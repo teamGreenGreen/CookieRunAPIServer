@@ -9,4 +9,12 @@ namespace API_Game_Server.Model.DTO
     {
         public string Token { get; set; }
     }
+    public class AttendanceRes : ErrorCodeDTO
+    {
+
+    }
+    public class AttendanceReq
+    {
+        public string Token { get; set; }
+    }
 }

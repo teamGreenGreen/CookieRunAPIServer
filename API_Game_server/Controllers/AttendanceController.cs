@@ -17,11 +17,6 @@ namespace API_Game_Server.Controllers
         {
             service = _service;
         }
-        [HttpGet]
-        public IActionResult Get()
-        {
-            return Ok("111");
-        }
         // 유저가 출석부를 요청 -> 갱신까지 남은 날과 현재까지 출석한 수를 반환
         [HttpPost("get")]
         public async Task<AttendanceInfoRes> GetAttendanceInfo(AttendanceInfoReq req)
@@ -31,9 +26,11 @@ namespace API_Game_Server.Controllers
             return res;
         }
         [HttpPost("request")]
-        public async Task RequestAttendance()
+        public async Task<AttendanceRes> RequestAttendance(AttendanceReq req)
         {
-            // TODO : 출석 요청
+            AttendanceRes res = new AttendanceRes();
+            res.Result = await service.RequestAttendance(req, res);
+            return res;
         }
     }
 }

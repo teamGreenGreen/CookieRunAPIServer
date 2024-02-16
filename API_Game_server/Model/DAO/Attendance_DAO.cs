@@ -8,6 +8,7 @@ namespace API_Game_Server.Model.DAO
     }
     public class AttendanceInfo
     {
+        public long Uid { get; set; }
         public int AttendanceCount { get; set; }
         public DateTime AttendanceDate {  get; set; }
     }
