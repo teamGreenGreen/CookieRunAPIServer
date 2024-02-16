@@ -3,6 +3,7 @@ public enum EErrorCode
     None = 0,
     InvalidToken = 1,
     DontKnow = 2,
+    ReverseMake = 3,
 
     // Account 1000~1999    
     Create_Account_Fail = 1001,

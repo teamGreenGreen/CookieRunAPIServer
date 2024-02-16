@@ -16,10 +16,10 @@ namespace API_Game_Server.Services
             redisDB = _redisDB;
             validationService = _validationService;
         }
-        public async Task<(EErrorCode, IEnumerable<FriendRequestElement>)> FriendRequestList(string Token)
+        public async Task<(EErrorCode, IEnumerable<FriendRequestElement>)> FriendRequestList(string token)
         {
             // 토큰 유효성 검사
-            string myUid = await validationService.GetUid(Token);
+            string myUid = await validationService.GetUid(token);
             // 유효하지 않은 토큰이면
             if(myUid == "")
             {

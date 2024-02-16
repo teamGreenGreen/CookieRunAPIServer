@@ -16,10 +16,10 @@ namespace API_Game_Server.Services
             redisDB = _redisDB;
             validationService = _validationService;
         }
-        public async Task<EErrorCode> FriendRequestAccept(string Token, long RequestId)
+        public async Task<EErrorCode> FriendRequestAccept(string token, long requestId)
         {
             // 토큰 유효성 검사
-            string myUid = await validationService.GetUid(Token);
+            string myUid = await validationService.GetUid(token);
             // 유효하지 않은 토큰이면
             if(myUid == "")
             {
@@ -27,7 +27,7 @@ namespace API_Game_Server.Services
             }
 
             // request_id를 이용해서 from_user_name과 to_user_name 가져오기
-            RequestInfo requestInfo = await gameDB.GetRequestInfo(RequestId);
+            RequestInfo requestInfo = await gameDB.GetRequestInfo(requestId);
 
             // 나의 친구 수가 최대 친구 수를 넘는지 조회
             string myFriendCountKey = string.Format("friend_relationship:{0}",requestInfo.ToUserName); // 받은 사람 = 나 에 대한 조회
@@ -56,7 +56,7 @@ namespace API_Game_Server.Services
             await redisDB.AddSetElement(addElementKey2, requestInfo.FromUserName); // redis 저장
 
             // RequestId에 해당하는 신청 삭제
-            await gameDB.DeleteFriendRequest(requestInfo.FromUserName, requestInfo.ToUserName);
+            await gameDB.DeleteFriendRequestById(requestId);
 
             return EErrorCode.None;
         }
