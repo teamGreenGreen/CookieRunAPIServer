@@ -2,10 +2,6 @@ using System.ComponentModel;
 
 namespace API_Game_Server.Model.DAO
 {
-    public class myName
-    {
-        public string UserName { get; set; }
-    }
     public class FriendInfo
     {
         public string UserName { get; set; }
