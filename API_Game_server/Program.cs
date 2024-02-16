@@ -19,6 +19,8 @@ builder.Services.AddTransient<GameDB>();
 // services 종속성 주입 추가
 builder.Services.AddTransient<ValidationService>();
 builder.Services.AddTransient<FriendRequestService>();
+builder.Services.AddTransient<FriendRequestAcceptService>();
+builder.Services.AddTransient<FriendRequestListService>();
 builder.Services.AddTransient<GameResultService>();
 builder.Services.AddTransient<AttendanceService>();
 builder.Services.AddTransient<RankService>();

@@ -17,7 +17,7 @@ public enum EErrorCode
     FriendReqFailMyFriendCountExceeded = 2004,
     // 친구 신청 수락 실패
     FriendReqAcceptFailMyFriendCountExceeded = 2005,
-    FriendReqAccepyFailTargetFriendCountExceeded = 2006,
+    FriendReqAcceptFailTargetFriendCountExceeded = 2006,
 
     // GameResult 3000~3999
     
