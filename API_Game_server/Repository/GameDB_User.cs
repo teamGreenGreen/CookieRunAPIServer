@@ -12,4 +12,28 @@ public partial class GameDB : IDisposable
             .Where("uid", uid)
             .FirstOrDefaultAsync<UserInfo>();
     }
+
+    public async Task<UserInfo> GetUserByNickname(string userName)
+    {
+        return await queryFactory.Query("USER_INFO")
+            .Select("info_id as InfoId", "uid", "user_name as UserName", "level", "exp", "money", "max_score AS MaxScore", "acquired_cookie_id AS AcquiredCookieId", "diamond")
+            .Where("user_name", userName)
+            .FirstOrDefaultAsync<UserInfo>();
+    }
+
+    public async Task<int> InsertUserGetId(Int64 uid, string userName)
+    {
+        return await queryFactory.Query("USER_INFO")
+            .InsertGetIdAsync<int>(new
+            {
+                uid = uid,
+                user_name = userName,
+                level = 1,
+                exp = 0,
+                money = 0,
+                max_score = 0,
+                // TODO : binary 타입에 0000 0001 추가
+                diamond = 0,
+            });
+    }
 }

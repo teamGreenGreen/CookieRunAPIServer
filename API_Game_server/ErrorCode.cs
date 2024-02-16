@@ -5,10 +5,14 @@ public enum EErrorCode
     DontKnow = 2,
 
     // Account 1000~1999    
+    // 인증 관련
     Create_Account_Fail = 1001,
     Login_Fail = 1002,
     Auth_Fail_InvalidResponse = 1003,
     LoginFailUserNotExist = 1004,
+    // 캐릭터 생성
+    CreateUserFailEmptyNickname = 1005,
+    CreateUserFailDuplicateNickname = 1006,
 
     // Friend 2000~2999
     // 친구 신청 실패
