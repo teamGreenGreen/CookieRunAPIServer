@@ -6,4 +6,5 @@ public enum EErrorCode
     CreateAccountFail = 1002,
     LoginFailUserNotExist = 1003,
     LoginFailPwNotMatch = 1004,
+    VerifyTokenFail = 3001,
 }
