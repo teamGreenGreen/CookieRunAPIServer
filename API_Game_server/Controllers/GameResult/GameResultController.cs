@@ -2,8 +2,8 @@ using API_Game_Server.Model.DTO;
 using API_Game_Server.Model.DAO;
 using Microsoft.AspNetCore.Mvc;
 using API_Game_Server.Repository;
-using API_Game_Server.Services;
 using Microsoft.AspNetCore.Http;
+using API_Game_Server.Services;
 
 namespace API_Game_Server.Controllers
 {

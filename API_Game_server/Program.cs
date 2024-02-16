@@ -20,6 +20,7 @@ builder.Services.AddTransient<GameDB>();
 builder.Services.AddTransient<ValidationService>();
 builder.Services.AddTransient<FriendRequestService>();
 builder.Services.AddTransient<GameResultService>();
+builder.Services.AddTransient<MailService>();
 builder.Services.AddTransient<AttendanceService>();
 builder.Services.AddTransient<RankService>();
 // Add services about redis
