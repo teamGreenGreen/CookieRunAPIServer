@@ -21,6 +21,7 @@ builder.Services.AddTransient<FriendRequestService>();
 builder.Services.AddTransient<FriendRequestAcceptService>();
 builder.Services.AddTransient<FriendRequestListService>();
 builder.Services.AddTransient<FriendRequestDenyService>();
+builder.Services.AddTransient<FriendListService>();
 builder.Services.AddTransient<GameResultService>();
 builder.Services.AddTransient<AuthService>();
 builder.Services.AddTransient<AttendanceService>();
