@@ -5,6 +5,7 @@ using API_Game_Server;
 using API_Game_Server.Repository;
 using API_Game_Server.Services;
 using StackExchange.Redis;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 

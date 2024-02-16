@@ -32,6 +32,9 @@ public enum EErrorCode
     AttendanceCountError = 4000,
     AttendanceFailFindUser = 4001,
     AttendanceFailSetString = 4002,
+    AttendanceReqFail = 4003,
+    AttendanceUpdateFail = 4004,
+    NotExistUserDoingReward = 4005,
 
     // Rank 4100 ~ 4199
     IsNewbie = 4100,
