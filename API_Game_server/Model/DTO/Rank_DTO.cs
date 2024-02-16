@@ -4,15 +4,27 @@ namespace API_Game_Server.Model.DTO
 {
     public class RankUpdateReq
     {
-        public string UserName { get; set; }
+        public string? UserName { get; set; }
         public double Score { get; set; }
     }
-    public class RanksGetReq
+    public class RanksLoadReq
     {
         public int Page { get; set; }
     }
+    public class RanksLoadRes : ErrorCodeDTO
+    {
+        public string[]? Ranks { get; set; }
+    }
     public class RankGetReq
     {
-        public string UserName { get; set; }
+        public string? Token { get; set; }
+    }
+    public class  RankGetRes : ErrorCodeDTO
+    {
+        public long Rank { get; set; }
+    }
+    public class RankSizeRes : ErrorCodeDTO
+    {
+        public long Size { get; set; }
     }
 }

@@ -2,6 +2,7 @@ using API_Game_Server;
 using Auth_Server.Model.DAO;
 using Auth_Server.Model.DTO;
 using Auth_Server.Repository;
+using Auth_Server.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,11 +12,11 @@ namespace Auth_Server.Controllers;
 [Route("[controller]")]
 public class AccountController : ControllerBase
 {
-    private readonly AccountDB accountDb;
+    private readonly AuthService authService;
 
-    public AccountController(AccountDB accountDb)
+    public AccountController(AuthService authService)
     {
-        this.accountDb = accountDb;
+        this.authService = authService;
     }
 
     [Route("Create")]
@@ -24,7 +25,7 @@ public class AccountController : ControllerBase
     {
         CreateAccountRes response = new();
 
-        response.Result = await accountDb.CreateAccountAsync(request.AccountName, request.Password);
+        response.Result = await authService.CreateAccountAsync(request.UserName, request.Password);
 
         return response;
     }
@@ -34,16 +35,8 @@ public class AccountController : ControllerBase
     public async Task<LoginAccountRes> Login(LoginAccountReq request)
     {
         LoginAccountRes response = new();
-        Account? account;
 
-        (response.Result, account) = await accountDb.VerifyUser(request.AccountName, request.Password);
-        if(account == null)
-        {
-            return response;
-        }
-
-        response.AuthToken = Security.GenerateAuthToken(account.SaltValue, response.Uid); 
-        response.Uid = account.Uid;
+        response = await authService.VerifyUser(request.UserName, request.Password);
 
         return response;
     }

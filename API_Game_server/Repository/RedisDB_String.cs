@@ -19,7 +19,7 @@ namespace API_Game_Server.Repository
         }
         public async Task<string> GetString(string key)
         {
-            // Get 실패시 nil
+            // Get 실패시 ""
             RedisValue result = await _db.StringGetAsync(key);
             return result.ToString();
         }

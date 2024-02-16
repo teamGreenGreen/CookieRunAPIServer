@@ -1,4 +1,3 @@
-using Controllers;
 using MySqlConnector;
 using SqlKata.Compilers;
 using SqlKata.Execution;
@@ -20,7 +19,9 @@ builder.Services.AddTransient<GameDB>();
 // services 종속성 주입 추가
 builder.Services.AddTransient<ValidationService>();
 builder.Services.AddTransient<FriendRequestService>();
-builder.Services.AddTransient<FriendRequestAcceptService>();
+builder.Services.AddTransient<GameResultService>();
+builder.Services.AddTransient<AttendanceService>();
+builder.Services.AddTransient<RankService>();
 // Add services about redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(opt =>
     ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));
