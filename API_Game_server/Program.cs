@@ -20,6 +20,7 @@ builder.Services.AddTransient<GameDB>();
 // services 종속성 주입 추가
 builder.Services.AddTransient<ValidationService>();
 builder.Services.AddTransient<FriendRequestService>();
+builder.Services.AddTransient<FriendRequestAcceptService>();
 // Add services about redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(opt =>
     ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));

@@ -18,8 +18,8 @@ namespace API_Game_Server.Services
         }
         public async Task<EErrorCode> FriendRequest(string Token, string ToUserName)
         {
-            string tokenKey = string.Format("token:{0}",Token);
-            string myUid = await validationService.GetUid(tokenKey);
+            // 토큰 유효성 검사
+            string myUid = await validationService.GetUid(Token);
             // 유효하지 않은 토큰이면
             if(myUid == "")
             {
@@ -74,6 +74,7 @@ namespace API_Game_Server.Services
             if(reverseFriendShipInfo != null)
             {
                 await gameDB.InsertFriendShip(myName,ToUserName);
+                await gameDB.InsertFriendShip(ToUserName,myName);
                 return EErrorCode.None;
             }
 
