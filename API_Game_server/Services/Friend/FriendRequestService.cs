@@ -74,7 +74,7 @@ namespace API_Game_Server.Services
             if(reverseFriendShipInfo != null)
             {
                 await gameDB.InsertFriendShip(myName,ToUserName);
-                await gameDB.InsertFriendShip(ToUserName,myName);
+                await gameDB.InsertFriendShip(ToUserName,myName); // 양방향 친구관계 생성
                 return EErrorCode.None;
             }
 
