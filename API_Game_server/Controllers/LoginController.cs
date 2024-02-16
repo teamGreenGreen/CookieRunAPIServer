@@ -30,6 +30,14 @@ public class LoginController : ControllerBase
             return response;
         }
 
+        // 유저가 있는지 확인
+        (errorCode, response.Uid) = await authService.VerifyUser(request.Uid);
+        // 유저가 없으면 유저 생성
+        if(errorCode == EErrorCode.LoginFailUserNotExist)
+        {
+            
+        }
+
         return response;
     }
 }

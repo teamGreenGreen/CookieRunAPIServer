@@ -1,13 +1,17 @@
+using API_Game_Server.Model.DAO;
 using API_Game_Server.Model.DTO;
+using API_Game_Server.Repository;
 
 namespace API_Game_Server.Services;
 
 public class AuthService
 {
-    string authServerAddress;
+    private GameDB gameDb;
+    private string authServerAddress;
 
-    public AuthService(IConfiguration configuration)
+    public AuthService(IConfiguration configuration, GameDB gameDb)
     {
+        this.gameDb = gameDb;
         authServerAddress = configuration.GetSection("AuthServer").Value + "/VerifyToken"; 
     }
 
@@ -31,5 +35,17 @@ public class AuthService
         }
 
         return EErrorCode.None;
+    }
+
+    // 유저가 존재하는지 확인
+    public async Task<(EErrorCode, Int64)> VerifyUser(Int64 uid)
+    {
+        UserInfo userInfo = await gameDb.GetUserByUid(uid);
+        if (userInfo is null)
+        {
+            return (EErrorCode.LoginFailUserNotExist, 0);
+        }
+
+        return (EErrorCode.None, userInfo.Uid);
     }
 }
