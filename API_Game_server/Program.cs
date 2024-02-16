@@ -14,12 +14,12 @@ IConfiguration configuration = builder.Configuration;
 builder.Services.Configure<DBConfig>(configuration.GetSection(nameof(DBConfig)));
 
 // Add services to the container.
-builder.Services.AddTransient<AccountDB>();
 builder.Services.AddTransient<GameDB>();
 // services 종속성 주입 추가
 builder.Services.AddTransient<ValidationService>();
 builder.Services.AddTransient<FriendRequestService>();
 builder.Services.AddTransient<GameResultService>();
+builder.Services.AddTransient<AuthService>();
 // Add services about redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(opt =>
     ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));
