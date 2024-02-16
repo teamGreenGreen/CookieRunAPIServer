@@ -1,5 +1,6 @@
 using API_Game_Server.Model.DAO;
 using SqlKata.Execution;
+using System.Text;
 
 namespace API_Game_Server.Repository;
 
@@ -13,7 +14,7 @@ public partial class GameDB : IDisposable
             .FirstOrDefaultAsync<UserInfo>();
     }
 
-    public async Task<UserInfo> GetUserByNickname(string userName)
+    public async Task<UserInfo> GetUserByUserName(string userName)
     {
         return await queryFactory.Query("USER_INFO")
             .Select("info_id as InfoId", "uid", "user_name as UserName", "level", "exp", "money", "max_score AS MaxScore", "acquired_cookie_id AS AcquiredCookieId", "diamond")
@@ -32,7 +33,7 @@ public partial class GameDB : IDisposable
                 exp = 0,
                 money = 0,
                 max_score = 0,
-                // TODO : binary 타입에 0000 0001 추가
+                acquired_cookie_id = 1,
                 diamond = 0,
             });
     }

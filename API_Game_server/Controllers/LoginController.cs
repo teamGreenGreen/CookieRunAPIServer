@@ -10,10 +10,12 @@ namespace API_Game_Server.Controllers;
 public class LoginController : ControllerBase
 {
     private readonly AuthService authService;
+    private readonly GameService gameService;
 
-    public LoginController(AuthService authService)
+    public LoginController(AuthService authService, GameService gameService)
     {
         this.authService = authService;
+        this.gameService = gameService;
     }
 
     // 인증 서버에서 토큰 인증을 요청하고, 게임 서버에 로그인을 하고 유저 데이터를 불러온다.
@@ -35,7 +37,7 @@ public class LoginController : ControllerBase
         // 유저가 없으면 유저 생성
         if(errorCode == EErrorCode.LoginFailUserNotExist)
         {
-            
+            (errorCode, response.Uid) = await gameService.CreateUserGameData(request.Uid, request.UserName);
         }
 
         return response;

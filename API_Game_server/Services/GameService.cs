@@ -19,12 +19,12 @@ public class GameService
             return (EErrorCode.CreateUserFailEmptyNickname, 0);
         }
 
-        UserInfo existUser = await gameDb.GetUserByNickname(userName);
+        UserInfo existUser = await gameDb.GetUserByUserName(userName);
         if (existUser is not null)
         {
             return (EErrorCode.CreateUserFailDuplicateNickname, 0);
         }
 
-        // retrun (EErrorCode.None, await)
+        return (EErrorCode.None, await gameDb.InsertUserGetId(uid, userName));
     }
 }
