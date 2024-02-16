@@ -45,7 +45,7 @@ public class AccountDB : IDisposable
     {
         return await queryFactory.Query("ACCOUNT")
             .Where("user_name", userName)
-            .Select("user_name AS UserName", "password", "uid")
+            .Select("user_name AS UserName", "salt_value AS SaltValue", "Password", "Uid")
             .FirstOrDefaultAsync<Account>();
     }
 
