@@ -1,6 +1,7 @@
 using API_Game_Server.Model.DAO;
 using API_Game_Server.Model.DTO;
 using API_Game_Server.Repository;
+using Microsoft.VisualBasic.FileIO;
 using StackExchange.Redis;
 
 namespace API_Game_Server.Services
@@ -20,32 +21,32 @@ namespace API_Game_Server.Services
         // 서버에 기록되어있는 출석 시작 날짜 반환
         public async Task<AttendanceDateInfo> VerifyDatabaseData(DateTime now)
         {
-            AttendanceDateInfo serverDate;
+            DateTime? serverDate;
             string redisRes = await redisDB.GetString("attendance_date_info:start");
             if (redisRes == "")
             {
                 // 해당 key가 존재하지 않는다.
                 // GameDB에는 존재하는지 확인
-                serverDate = await gameDB.GetServerDate();
+                serverDate = ReadData();
                 if (serverDate == null)
                 {
                     // GameDB에도 없다. 오늘을 기준으로 한다.
                     await redisDB.SetString("attendance_date_info:start", now.ToString());
-                    serverDate = await gameDB.SetServerDate(now);
+                    serverDate = WriteDate(now);
                 }
                 else
                 {
                     // GameDB에는 있다. Redis에 등록한다.
-                    await redisDB.SetString("attendance_date_info:start", serverDate.AttendanceStartDate.ToString());
+                    await redisDB.SetString("attendance_date_info:start", serverDate.ToString());
                 }
             }
             else
             {
                 // Redis cache hit!
-                serverDate = new AttendanceDateInfo();
-                serverDate.AttendanceStartDate = Convert.ToDateTime(redisRes);
+                serverDate = Convert.ToDateTime(redisRes);
             }
-            return serverDate;
+            AttendanceDateInfo result = new AttendanceDateInfo() { AttendanceStartDate = (DateTime)serverDate };
+            return result;
         }
 
         public async Task<int> GetTimeUntilNextRenewal(DateTime now, AttendanceDateInfo serverDate, int maxDate)
@@ -66,8 +67,8 @@ namespace API_Game_Server.Services
                 {
                     return -1;
                 }
-                await gameDB.SetServerDate(remainder);
-                remainDays = duration.Days % maxDate;
+                WriteDate(remainder);
+                remainDays = maxDate - duration.Days % maxDate;
             }
             return remainDays;
         }
@@ -108,6 +109,24 @@ namespace API_Game_Server.Services
             
             return EErrorCode.None;
         }
-
+        public DateTime? ReadData()
+        {
+            string filePath = "./Resources/AttendanceDate.csv";
+            string row = "";
+            using (TextFieldParser parser = new TextFieldParser(filePath))
+            {
+                // csv에 저장된 날짜 읽기
+                row = parser.ReadLine();
+            }
+            if (row != null) return Convert.ToDateTime(row);
+            // 비어있으면 null 반환
+            return null;
+        }
+        public DateTime WriteDate(DateTime date)
+        {
+            string filePath = "./Resources/AttendanceDate.csv";
+            File.WriteAllText(filePath, date.ToString());
+            return date;
+        }
     }
 }

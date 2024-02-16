@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API_Game_Server.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("[controller]")]
     public class AttendanceController : ControllerBase
     {
         private readonly AttendanceService service;
@@ -16,6 +16,11 @@ namespace API_Game_Server.Controllers
         public AttendanceController(AttendanceService _service)
         {
             service = _service;
+        }
+        [HttpGet]
+        public IActionResult Get()
+        {
+            return Ok("111");
         }
         // 유저가 출석부를 요청 -> 갱신까지 남은 날과 현재까지 출석한 수를 반환
         [HttpPost("get")]
