@@ -31,14 +31,12 @@ public class AccountDB : IDisposable
 
     public async Task<int> InsertAccountAsync(string userName, string saltValue, string hashingPassword)
     {
-        object account = new
+        return await queryFactory.Query("ACCOUNT").InsertAsync(new
         {
             user_name = userName,
             salt_value = saltValue,
             password = hashingPassword
-        };
-
-        return await queryFactory.Query("ACCOUNT").InsertAsync(account);
+        });
     }
 
     public async Task<Account> GetAccount(string userName, string password)
