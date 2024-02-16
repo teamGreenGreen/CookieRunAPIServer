@@ -24,6 +24,7 @@ builder.Services.AddTransient<FriendRequestDenyService>();
 builder.Services.AddTransient<FriendListService>();
 builder.Services.AddTransient<GameResultService>();
 builder.Services.AddTransient<AuthService>();
+builder.Services.AddTransient<MailService>();
 builder.Services.AddTransient<AttendanceService>();
 builder.Services.AddTransient<RankService>();
 // Add services about redis

@@ -18,9 +18,5 @@ namespace API_Game_Server.Model.DTO
     // 응답 데이터
     public class GameResultRes : ErrorCodeDTO
     {
-        //public int Money { get; set; }
-        //public int Level { get; set; }
-        //public int Exp { get; set; }
-        //public int MaxScore { get; set; }
     }
 }

@@ -12,14 +12,15 @@ namespace API_Game_Server.Services
         private readonly Dictionary<int/*ItemID*/, ItemData> itemData = new Dictionary<int, ItemData>();
         private readonly Dictionary<int/*Level*/, UserLevelData> userLevelData = new Dictionary<int, UserLevelData>();
         private readonly Dictionary<int/*CookieID*/, CookieData> cookieData = new Dictionary<int, CookieData>();
-        
+
         // DB
         private readonly GameDB gameDB;
         private readonly RedisDB redisDB;
 
-
+        // Service
         private readonly ValidationService validationService;
-        
+        private readonly MailService mailService;
+
         // 
         private readonly int maxMoney = 99999;
         private ResultUserInfo userinfo;
@@ -30,11 +31,12 @@ namespace API_Game_Server.Services
         private int newExp = 0;
         private int newLevel = 0;
 
-        public GameResultService(GameDB _gameDB, RedisDB _redisDB, ValidationService _validationService)
+        public GameResultService(GameDB _gameDB, RedisDB _redisDB, ValidationService _validationService, MailService _mailService)
         {
             gameDB = _gameDB;
             redisDB = _redisDB;
             validationService = _validationService;
+            mailService = _mailService;
             ReadGameData();
         }
 
@@ -42,19 +44,19 @@ namespace API_Game_Server.Services
         {
             // UID 획득 및 조회
             string stringUid = await validationService.GetUid(req.Token);
-            if(stringUid == "") return EErrorCode.InvalidToken;
+            if (stringUid == "") return EErrorCode.InvalidToken;
 
             long uid = long.Parse(stringUid);
 
             userinfo = await gameDB.GetUserInfo(uid);
             if (userinfo is null) return EErrorCode.InvalidToken;
-           
+
             // 플레이어 속도, 플레이 시간 검증
             EErrorCode curError = ValidatePlay(req);
             if (EErrorCode.None != curError) return curError;
 
             // 경험치, 돈 업데이트
-            UpdateExpAndMoney();
+            UpdateExpAndMoney(uid);
 
             // 최고 기록 업데이트
             await UpdateHighestScore(userinfo);
@@ -67,7 +69,7 @@ namespace API_Game_Server.Services
 
         public async Task UpdateHighestScore(ResultUserInfo userinfo)
         {
-            if(userinfo is null) return;
+            if (userinfo is null) return;
 
             newMaxScore = userinfo.MaxScore;
             if (newMaxScore < totalScore)
@@ -78,10 +80,10 @@ namespace API_Game_Server.Services
             }
         }
 
-        public void UpdateExpAndMoney()
+        public async Task<EErrorCode> UpdateExpAndMoney(long uid)
         {
             // 경험치, 돈 추가
-            newMoneyPoint = (userinfo.Money + totalMoney) < maxMoney ? (userinfo.Money + totalMoney) : maxMoney;
+            newMoneyPoint = userinfo.Money + totalMoney < maxMoney ? userinfo.Money + totalMoney : maxMoney;
             newExp = userinfo.Exp + totalScore;
 
             // 레벨업
@@ -95,13 +97,26 @@ namespace API_Game_Server.Services
                     break;
                 }
             }
+
+            if (newLevel != userinfo.Level)
+            {
+                int rewardCount = 0;
+                for (int i = userinfo.Level + 1; i <= newLevel; i++)
+                {
+                    rewardCount += i * 10;
+                }
+
+                DateTime sevenDaysLater = DateTime.Now.AddDays(7);
+                await mailService.AddMailList(uid, "운영자", "레벨업 보상", rewardCount, false, "diamond", sevenDaysLater);
+            }
+
+            return EErrorCode.None;
         }
 
         public void SaveGameDB(long uid)
         {
             if (newMoneyPoint != userinfo.Money || newExp != userinfo.Exp || newLevel != userinfo.Level || newMaxScore != userinfo.MaxScore)
             {
-                
                 // 업데이트할 데이터
                 object dataToUpdate = new
                 {
@@ -111,7 +126,7 @@ namespace API_Game_Server.Services
                     max_score = newMaxScore
                 };
 
-                if(dataToUpdate  != null)
+                if (dataToUpdate != null)
                     gameDB.ChangeDB(uid, newLevel, newExp, newMoneyPoint, newMaxScore);
             }
         }
@@ -148,12 +163,12 @@ namespace API_Game_Server.Services
 
                 if (expBonus != 0)
                 {
-                    totalScore += (totalScore / 100) * expBonus;
+                    totalScore += totalScore / 100 * expBonus;
                 }
 
                 if (moneyBonus != 0)
                 {
-                    totalMoney += (totalMoney / 100) * moneyBonus;
+                    totalMoney += totalMoney / 100 * moneyBonus;
                 }
 
                 if (score != totalScore || money != totalMoney)
