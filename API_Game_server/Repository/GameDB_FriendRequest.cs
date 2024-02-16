@@ -17,35 +17,55 @@ public partial class GameDB : IDisposable
         .Where("user_name", friendName)
         .FirstOrDefaultAsync<FriendInfo>();
     }
-    public async Task<FriendRequestInfo> GetFriendRequestInfo(string myName, string friendName)
+    public async Task<FriendRequestInfo> GetFriendRequestInfo(string fromUserName, string toUserName)
     {
         return await queryFactory.Query("FRIEND_REQUEST")
         .Select("from_user_name as FromUserName", "to_user_name as ToUserName")
-        .Where("from_user_name", myName)
-        .Where("to_user_name", friendName)
+        .Where("from_user_name", fromUserName)
+        .Where("to_user_name", toUserName)
         .FirstOrDefaultAsync<FriendRequestInfo>();
     }
-    public async Task<ReverseFriendShipInfo> GetReverseFriendShipInfo(string myName, string friendName)
+    public async Task<RequestInfo> GetRequestInfo(long requestId)
     {
-        return await queryFactory.Query("FRIEND_REQUSET")
+        return await queryFactory.Query("FRIEND_REQUEST")
+        .Select("request_id as RequestId", "from_user_name as FromUserName", "to_user_name as ToUserName")
+        .Where("request_id", requestId)
+        .FirstOrDefaultAsync<RequestInfo>();
+    }
+    public async Task<ReverseRequestInfo> GetReverseRequestInfo(string myName, string targetName)
+    {
+        return await queryFactory.Query("FRIEND_REQUEST")
         .Select("from_user_name as FromUserName", "to_user_name as ToUserName")
-        .Where("from_user_name", friendName)
+        .Where("from_user_name", targetName)
         .Where("to_user_name", myName)
-        .FirstOrDefaultAsync<ReverseFriendShipInfo>();
+        .FirstOrDefaultAsync<ReverseRequestInfo>();
     }
-    public async Task InsertFriendShip(string myName, string friendName)
+    public async Task InsertFriendShip(string fromUserName, string toUserName)
     {
-        var friendshipData = new[]
-        {
-            new {from_user_name = myName, to_user_name = friendName},
-            new {from_user_name = friendName, to_user_name = myName}
-        };
-
-        await queryFactory.Query("FRIEND_RELATIONSHIP").InsertAsync(friendshipData);
+        await queryFactory.Query("FRIEND_RELATIONSHIP").InsertAsync(new { from_user_name = fromUserName, to_user_name = toUserName});
     }
-
-    public async Task InsertFriendRequest(string myName, string friendName)
+    public async Task InsertFriendRequest(string fromUserName, string toUserName)
     {
-        await queryFactory.Query("FRIEND_REQUEST").InsertAsync(new { from_user_name = myName, to_user_name = friendName });
+        await queryFactory.Query("FRIEND_REQUEST").InsertAsync(new { from_user_name = fromUserName, to_user_name = toUserName });
+    }
+    public async Task DeleteFriendRequest(string fromUserName, string toUserName)
+    {
+        await queryFactory.Query("FRIEND_REQUEST")
+        .Where("from_user_name",fromUserName)
+        .Where("to_user_name",toUserName)
+        .DeleteAsync();
+    }
+    public async Task DeleteFriendRequestById(long requestId)
+    {
+        await queryFactory.Query("FRIEND_REQUEST")
+        .Where("request_id", requestId)
+        .DeleteAsync();
+    }
+    public async Task<IEnumerable<FriendRequestElement>> GetFriendRequestList(string myName)
+    {
+        return await queryFactory.Query("FRIEND_REQUEST")
+        .Select("request_id as RequestId", "from_user_name as FromUserName", "to_user_name as ToUserName")
+        .Where("to_user_name", myName)
+        .GetAsync<FriendRequestElement>();
     }
 }

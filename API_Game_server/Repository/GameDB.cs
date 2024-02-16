@@ -19,7 +19,7 @@ public partial class GameDB : IDisposable
     {
         dbConfig = _dbConfig;
 
-        dbConnection = new MySqlConnection(dbConfig.Value.GameDB); // 해당 부분을 변경해야 함
+        dbConnection = new MySqlConnection(dbConfig.Value.GameDB);
         dbConnection.Open();
 
         queryFactory = new QueryFactory(dbConnection, new SqlKata.Compilers.MySqlCompiler());

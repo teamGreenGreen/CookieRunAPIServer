@@ -21,12 +21,20 @@ public partial class GameDB : IDisposable
     public async void ChangeDB(long id, int newLevel, int newExp, int newMoneyPoint, int newMaxScore)
     {
         // SQLKata 쿼리 생성
-        await queryFactory.Query("USER_INFO").Where("uid", id).UpdateAsync(new
+        try
         {
-            level = newLevel,
-            exp = newExp,
-            money = newMoneyPoint,
-            max_score = newMaxScore
-        });
+            await queryFactory.Query("USER_INFO").Where("uid", id).UpdateAsync(new
+            {
+                level = newLevel,
+                exp = newExp,
+                money = newMoneyPoint,
+                max_score = newMaxScore
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+
     }
 }

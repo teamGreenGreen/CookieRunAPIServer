@@ -15,12 +15,17 @@ IConfiguration configuration = builder.Configuration;
 builder.Services.Configure<DBConfig>(configuration.GetSection(nameof(DBConfig)));
 
 // Add services to the container.
-builder.Services.AddTransient<AccountDB>();
 builder.Services.AddTransient<GameDB>();
 // services 종속성 주입 추가
 builder.Services.AddTransient<ValidationService>();
 builder.Services.AddTransient<FriendRequestService>();
+builder.Services.AddTransient<FriendRequestAcceptService>();
+builder.Services.AddTransient<FriendRequestListService>();
+builder.Services.AddTransient<FriendRequestDenyService>();
+builder.Services.AddTransient<FriendListService>();
 builder.Services.AddTransient<GameResultService>();
+builder.Services.AddTransient<AuthService>();
+builder.Services.AddTransient<MailService>();
 builder.Services.AddTransient<AttendanceService>();
 builder.Services.AddTransient<RankService>();
 // Add services about redis

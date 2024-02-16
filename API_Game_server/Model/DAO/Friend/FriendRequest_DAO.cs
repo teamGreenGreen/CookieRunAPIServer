@@ -2,10 +2,6 @@ using System.ComponentModel;
 
 namespace API_Game_Server.Model.DAO
 {
-    public class myName
-    {
-        public string UserName { get; set; }
-    }
     public class FriendInfo
     {
         public string UserName { get; set; }
@@ -23,7 +19,7 @@ namespace API_Game_Server.Model.DAO
     {
         public long FriendCount { get; set; }
     }
-    public class ReverseFriendShipInfo
+    public class ReverseRequestInfo
     {
         public string FromUserName { get; set; }
         public string ToUserName { get; set; }
