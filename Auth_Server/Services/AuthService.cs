@@ -35,10 +35,20 @@ public class AuthService
             return response;
         }
 
-        response.AuthToken = Security.GenerateAuthToken(account.SaltValue, response.Uid);
         response.Uid = account.Uid;
+        response.AuthToken = Security.GenerateAuthToken(account.SaltValue, response.Uid);
 
         return response;
+    }
+
+    public async Task<EErrorCode> VerifyToken(string authToken, Int64 uid)
+    {
+        string saltValue = await accountDb.GetSaltValue(uid);
+
+        if (authToken == Security.GenerateAuthToken(saltValue, uid))
+            return EErrorCode.None;
+        else
+            return EErrorCode.VerifyTokenFail;
     }
 
 }
