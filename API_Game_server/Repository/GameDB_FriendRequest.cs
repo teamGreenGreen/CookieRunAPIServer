@@ -55,4 +55,11 @@ public partial class GameDB : IDisposable
         .Where("to_user_name",toUserName)
         .DeleteAsync();
     }
+    public async Task<IEnumerable<FriendRequestElement>> GetFriendRequestList(string myName)
+    {
+        return await queryFactory.Query("FRIEND_REQUEST")
+        .Select("request_id as RequestId", "from_user_name as FromUserName", "to_user_name as ToUserName")
+        .Where("to_user_name", myName)
+        .GetAsync<FriendRequestElement>();
+    }
 }

@@ -44,7 +44,7 @@ namespace API_Game_Server.Services
             targetFriendCount.FriendCount = await redisDB.SizeOfSet(targetFriendCountKey);
              if(targetFriendCount.FriendCount >= 5) // Test를 위해 최대 친구 수 5로 수정 -> 50으로 수정 예정
             {
-                return EErrorCode.FriendReqAccepyFailTargetFriendCountExceeded;
+                return EErrorCode.FriendReqAcceptFailTargetFriendCountExceeded;
             }
 
             // RequestId 에 해당하는 신청의 정보로 FRIEND_RELATIONSHIP 테이블에 등록(mysql + redis)

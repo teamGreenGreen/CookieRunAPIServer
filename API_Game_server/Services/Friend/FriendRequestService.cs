@@ -26,6 +26,7 @@ namespace API_Game_Server.Services
                 return EErrorCode.InvalidToken;
             }
 
+            // 가져온 uid 이용해서 클라이언트의 user_name 조회
             string uidKey = string.Format("user_info:uid:{0}", myUid);
             string[] arrUidValues = {"user_name"};
             string[] arrMyName = await redisDB.GetHash(uidKey, arrUidValues); // 받아올 칼럼명을 프로퍼티명으로 전달
