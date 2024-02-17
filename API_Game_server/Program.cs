@@ -27,6 +27,7 @@ builder.Services.AddTransient<FriendDeleteService>();
 builder.Services.AddTransient<GameResultService>();
 builder.Services.AddTransient<AuthService>();
 builder.Services.AddTransient<GameService>();
+builder.Services.AddTransient<UserService>();
 builder.Services.AddTransient<MailService>();
 builder.Services.AddTransient<AttendanceService>();
 builder.Services.AddTransient<RankService>();

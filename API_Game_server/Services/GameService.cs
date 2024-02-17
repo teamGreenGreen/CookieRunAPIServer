@@ -12,7 +12,7 @@ public class GameService
         this.gameDb = gameDb;
     }
 
-    public async Task<(EErrorCode, int)> CreateUserGameData(Int64 uid, string userName)
+    public async Task<(EErrorCode, int)> CreateUserGameData(Int64 userId, string userName)
     {
         if(string.IsNullOrEmpty(userName))
         {
@@ -25,6 +25,6 @@ public class GameService
             return (EErrorCode.CreateUserFailDuplicateNickname, 0);
         }
 
-        return (EErrorCode.None, await gameDb.InsertUserGetId(uid, userName));
+        return (EErrorCode.None, await gameDb.InsertUserGetId(userId, userName));
     }
 }
