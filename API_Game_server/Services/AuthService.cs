@@ -25,7 +25,7 @@ public class AuthService
         HttpResponseMessage response = await client.PostAsJsonAsync(authServerAddress, new { AuthToken = authToken, Uid = uid });
         if(response is null || response.StatusCode != System.Net.HttpStatusCode.OK)
         {
-            return EErrorCode.Auth_Fail_InvalidResponse;
+            return EErrorCode.AuthFailInvalidResponse;
         }
 
         // Http 요청에 대한 응답이 성공적으로 수신되었으면 Json 데이터를 읽어옴
@@ -33,7 +33,7 @@ public class AuthService
         // 다른 api 서버에서 보낸 에러 코드는 여기서 알 수 없기 때문에 포괄적인 에러 코드로 처리
         if (authResult is null || authResult.Result != EErrorCode.None)
         {
-            return EErrorCode.Auth_Fail_InvalidResponse;
+            return EErrorCode.AuthFailInvalidResponse;
         }
 
         return EErrorCode.None;
@@ -54,14 +54,39 @@ public class AuthService
     public async Task<(EErrorCode, string)> GenerateSessionId(Int64 uid)
     {
         string sessionId = Security.GenerateSessionId();
-        
+
         // 발급한 세션ID redis에 추가
-        // TODO : redis에 유저의 user_info:uid:uid값을 키로 sessionId를 저장해야 함
-        if(await redisDb.SetString(string.Format("uid:{0}", uid), sessionId))
+
+        // 1. gameDB에서 user_info 조회
+        ResultUserInfo userInfo = await gameDb.GetUserInfo(uid);
+        if (userInfo == null) return (EErrorCode.LoginFailAddRedis, null);
+        // 2. redis에 저장하기 위한 인스턴스 생성
+        RedisUserInfo redis_info = GenerateSessionInfo(sessionId, userInfo);
+
+        // 3. redis에 유저 정보(세션) 업데이트
+        try
         {
-            return (EErrorCode.None, sessionId);
+            await redisDb.SetHash($"user_info:uid:{uid}", redis_info);
+        }
+        catch
+        {
+            return (EErrorCode.LoginFailAddRedis, null);
         }
 
         return (EErrorCode.LoginFailAddRedis, null);
+    }
+
+    public RedisUserInfo GenerateSessionInfo(string sessionId, ResultUserInfo userInfo)
+    {
+        return new RedisUserInfo
+        {
+            SessionId = sessionId,
+            UserName = userInfo.UserName,
+            Level = userInfo.Level,
+            Exp = userInfo.Exp,
+            Money = userInfo.Money,
+            Diamond = userInfo.Diamond,
+            MaxScore = userInfo.MaxScore,
+        };
     }
 }
