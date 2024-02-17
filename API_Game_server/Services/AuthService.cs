@@ -55,7 +55,7 @@ public class AuthService
     {
         string sessionId = Security.GenerateSessionId();
         
-        // 발급한 토큰 redis에 추가
+        // 발급한 세션ID redis에 추가
         // TODO : redis에 유저의 user_info:uid:uid값을 키로 sessionId를 저장해야 함
         if(await redisDb.SetString(string.Format("uid:{0}", uid), sessionId))
         {

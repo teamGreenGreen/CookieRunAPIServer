@@ -11,7 +11,7 @@ public class LoginReq
 
 public class LoginRes : ErrorCodeDTO
 {
-    public string AccessToken { get; set; }
+    public string SessionId { get; set; }
     public Int64 Uid { get; set;}
     public ResultUserInfo UserInfo { get; set; }
 
