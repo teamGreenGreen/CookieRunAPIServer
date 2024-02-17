@@ -9,21 +9,21 @@ namespace API_Game_Server.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class MailDeleteController : ControllerBase
+    public class MailOpenController : ControllerBase
     {
         readonly MailService mailService;
 
-        public MailDeleteController(MailService _mailService)
+        public MailOpenController(MailService mailService)
         {
-            mailService = _mailService;
+            this.mailService = mailService;
         }
 
         [HttpPost]
-        public async Task<MailListRes> PostAsync(MailListReq req)
+        public async Task<MailRes> PostAsync(MailReq req)
         {
             //응답 객체 생성
-            MailListRes res = new();
-            res.Result = await mailService.DeleteMailList(req);
+            MailRes res = new();
+            res.Result = await mailService.OpenMailAsync(req);
             return res;
         }
     }

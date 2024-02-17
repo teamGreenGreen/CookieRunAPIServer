@@ -14,17 +14,19 @@ namespace API_Game_Server.Controllers
     {
         readonly MailService mailService;
 
-        public MailListController(MailService _mailService)
+        public MailListController(MailService mailService)
         {
-            mailService = _mailService;
+            this.mailService = mailService;
         }
 
         [HttpPost]
-        public async Task<MailListRes> PostAsync(MailListReq req)
+        public async Task<MailRes> PostAsync(MailReq req)
         {
             //응답 객체 생성
-            MailListRes res = new();
-            res.Result = await mailService.GetMailList(req);
+            MailRes res = new();
+
+            // 메일 리스트 불러오기
+            res.Result = await mailService.GetMailListAsync(req, res);
             return res;
         }
     }

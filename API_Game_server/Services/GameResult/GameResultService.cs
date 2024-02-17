@@ -26,69 +26,124 @@ namespace API_Game_Server.Services
         private ResultUserInfo userinfo;
         private int totalScore = 0;
         private int totalMoney = 0;
-        private int newMoneyPoint = 0;
-        private int newMaxScore = 0;
-        private int newExp = 0;
-        private int newLevel = 0;
 
-        public GameResultService(GameDB _gameDB, RedisDB _redisDB, ValidationService _validationService, MailService _mailService)
+        public GameResultService(GameDB gameDB, RedisDB redisDB, ValidationService validationService, MailService mailService)
         {
-            gameDB = _gameDB;
-            redisDB = _redisDB;
-            validationService = _validationService;
-            mailService = _mailService;
+            this.gameDB = gameDB;
+            this.redisDB = redisDB;
+            this.validationService = validationService;
+            this.mailService = mailService;
             ReadGameData();
         }
 
-        public async Task<EErrorCode> ValidateResult(GameResultReq req)
+        public async Task<EErrorCode> ValidateRequestAsync(GameResultReq req)
         {
-            // UID 획득 및 조회
-            string stringUid = await validationService.GetUid(req.Token);
-            if (stringUid == "") return EErrorCode.InvalidToken;
+            // UID 얻기
+            long uid = -1;
+            try
+            {
+                string stringUid = await validationService.GetUid(req.Token);
+                uid = long.Parse(stringUid);
+                userinfo = await gameDB.GetUserInfoAsync(uid);
+            }
+            catch
+            {
+                return EErrorCode.InvalidToken;
+            }
 
-            long uid = long.Parse(stringUid);
+            // 플레이 검증
+            return ValidatePlay(req); 
+        }
 
-            userinfo = await gameDB.GetUserInfo(uid);
-            if (userinfo is null) return EErrorCode.InvalidToken;
+        public async Task<EErrorCode> GiveRewardsAsync(GameResultReq req, GameResultRes res)
+        {
+            int newMoney = 0;
+            int newExp = 0;
+            int newLevel = 0;
+            int newMaxScore = 0;
 
-            // 플레이어 속도, 플레이 시간 검증
-            EErrorCode curError = ValidatePlay(req);
-            if (EErrorCode.None != curError) return curError;
+            try
+            {
+                newMoney = CalcMoney();
+                newExp = CalcExp();
+                newLevel = CalcLevel(newExp);
+                newMaxScore = CalcMaxScore();
+            }
+            catch
+            {
+                //TODO.김초원 : 게임은 했는데 보상 계산에서 에러난 경우
+                return EErrorCode.GameResultService_RewardCalcFail;
+            }
 
-            // 경험치, 돈 업데이트
-            UpdateExpAndMoney(uid);
+            try
+            {
+                await UpdateUserInfoAsync(userinfo.Uid, newLevel, newExp, newMoney, userinfo.Diamond, newMaxScore, userinfo.UserName);
+            }
+            catch
+            {
+                //TODO.김초원 : 유저 정보가 업데이트 되지 않은 경우
+                return EErrorCode.GameResultService_UserInfoUpdateError;
+            }
 
-            // 최고 기록 업데이트
-            await UpdateHighestScore(userinfo);
+            try
+            {
+                bool bLevelUp = newLevel != userinfo.Level;
+                if (bLevelUp)
+                    AddReward(newLevel);
+            }
+            catch
+            {
+                //TODO.김초원 : 레벨 업은 했는데 보상이 안 나간 경우
+                // Log를 남겨 놓고 실제로 레벨 업을 했는데 보상이 안 나간 경우 로그를 확인해서 보상을 해야하나?
+                return EErrorCode.GameResultService_AddLevelUpRewardFail;
+            }
 
-            // DB 저장
-            SaveGameDB(uid);
+            // Redis 저장
+            await redisDB.SetZset("rank", userinfo.UserName, newMaxScore);
+
+            res.Exp = newExp;
+            res.Level = newLevel;
+            res.Money = newMoney;
 
             return EErrorCode.None;
         }
 
-        public async Task UpdateHighestScore(ResultUserInfo userinfo)
+        public int CalcMaxScore()
         {
-            if (userinfo is null) return;
-
-            newMaxScore = userinfo.MaxScore;
+            int newMaxScore = userinfo.MaxScore;
             if (newMaxScore < totalScore)
             {
                 // Redis 랭킹 업데이트
                 newMaxScore = totalScore;
-                await redisDB.SetZset("rank", userinfo.UserName, newMaxScore);
+            }
+
+            return newMaxScore;
+        }
+
+        public void AddReward(int newLevel)
+        {
+            int rewardCount = 0;
+            for (int i = userinfo.Level + 1; i <= newLevel; i++)
+            {
+                rewardCount += i * 10;
+                DateTime sevenDaysLater = DateTime.Now.AddDays(7);
+                _ = mailService.AddMailAsync(userinfo.Uid, "운영자", "레벨업 보상", rewardCount, false, "diamond", sevenDaysLater);
             }
         }
 
-        public async Task<EErrorCode> UpdateExpAndMoney(long uid)
+        public int CalcMoney()
         {
-            // 경험치, 돈 추가
-            newMoneyPoint = userinfo.Money + totalMoney < maxMoney ? userinfo.Money + totalMoney : maxMoney;
-            newExp = userinfo.Exp + totalScore;
+            return userinfo.Money + totalMoney < maxMoney ? userinfo.Money + totalMoney : maxMoney;
+        }
 
-            // 레벨업
-            newLevel = userinfo.Level;
+        public int CalcExp()
+        {
+            return userinfo.Exp + totalScore;
+        }
 
+        public int CalcLevel(int newExp)
+        {
+            int newLevel = userinfo.Level;
             for (int level = newLevel; level <= userLevelData.Count; level++)
             {
                 if (newExp < userLevelData[level].MinExp)
@@ -98,37 +153,17 @@ namespace API_Game_Server.Services
                 }
             }
 
-            if (newLevel != userinfo.Level)
-            {
-                int rewardCount = 0;
-                for (int i = userinfo.Level + 1; i <= newLevel; i++)
-                {
-                    rewardCount += i * 10;
-                }
-
-                DateTime sevenDaysLater = DateTime.Now.AddDays(7);
-                await mailService.AddMailList(uid, "운영자", "레벨업 보상", rewardCount, false, "diamond", sevenDaysLater);
-            }
-
-            return EErrorCode.None;
+            return newLevel;
         }
 
-        public void SaveGameDB(long uid)
+        public Task UpdateUserInfoAsync(long uid, int newLevel, int newExp, int newMoney, int newDiamond, int newMaxScore, string userName)
         {
-            if (newMoneyPoint != userinfo.Money || newExp != userinfo.Exp || newLevel != userinfo.Level || newMaxScore != userinfo.MaxScore)
+            if (newMoney != userinfo.Money || newExp != userinfo.Exp || newLevel != userinfo.Level || newMaxScore != userinfo.MaxScore)
             {
-                // 업데이트할 데이터
-                object dataToUpdate = new
-                {
-                    level = newLevel,
-                    exp = newExp,
-                    money = newMoneyPoint,
-                    max_score = newMaxScore
-                };
-
-                if (dataToUpdate != null)
-                    gameDB.ChangeDB(uid, newLevel, newExp, newMoneyPoint, newMaxScore);
+                return gameDB.UpdateUserInfoAsync(uid, newLevel, newExp, newMoney, userinfo.Diamond, newMaxScore, userinfo.UserName);
             }
+
+            return Task.CompletedTask;
         }
 
         public EErrorCode ValidatePlay(GameResultReq req)
@@ -138,13 +173,12 @@ namespace API_Game_Server.Services
             int speed = req.Speed;
             if (speed != cookieData[cookieId].Speed)
             {
-                return EErrorCode.PlayerSpeedChangedDetected;
+                return EErrorCode.GameResultService_PlayerSpeedChangedDetected;
             }
 
             // 아이템 점수, 코인이 조작된 경우
-
-            uint score = req.Score;
-            uint money = req.Money;
+            int score = req.Score;
+            int money = req.Money;
             Dictionary<int/*jellyID*/, int/*jellyCount*/>? items = req.Items;
             totalMoney = 0;
             totalScore = 0;
@@ -173,7 +207,7 @@ namespace API_Game_Server.Services
 
                 if (score != totalScore || money != totalMoney)
                 {
-                    return EErrorCode.MoneyOrExpChangedDetected;
+                    return EErrorCode.GameResultService_MoneyOrExpChangedDetected;
                 }
             }
 

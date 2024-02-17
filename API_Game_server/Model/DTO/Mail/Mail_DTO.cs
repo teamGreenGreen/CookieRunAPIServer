@@ -1,16 +1,18 @@
+using API_Game_Server.Model.DAO;
 using System.ComponentModel;
 
 namespace API_Game_Server.Model.DTO
 {
     // 요청 데이터
-    public class MailListReq
+    public class MailReq
     {
-        public int MailboxId {  get; set; }
         public string Token { get; set; }
+        public int MailboxId { get; set; }
     }
 
     // 응답 데이터
-    public class MailListRes : ErrorCodeDTO
+    public class MailRes : ErrorCodeDTO
     {
+        public IEnumerable<MailInfo> MailList { get; set; }
     }
 }

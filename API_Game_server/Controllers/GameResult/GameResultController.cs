@@ -13,9 +13,9 @@ namespace API_Game_Server.Controllers
     {
         readonly GameResultService gameResultService;
 
-        public GameResultController(GameResultService _gameResultService)
+        public GameResultController(GameResultService gameResultService)
         {
-            gameResultService = _gameResultService;
+            this.gameResultService = gameResultService;
         }
 
         [HttpPost]
@@ -23,7 +23,14 @@ namespace API_Game_Server.Controllers
         {
             //응답 객체 생성
             GameResultRes res = new();
-            res.Result = await gameResultService.ValidateResult(req);
+
+            // 요청 검증
+            res.Result = await gameResultService.ValidateRequestAsync(req);
+            if (res.Result != EErrorCode.None)
+                return res;
+
+            // 게임 보상 지급
+            res.Result = await gameResultService.GiveRewardsAsync(req, res);
             return res;
         }
     }
