@@ -14,7 +14,7 @@ public class UserService
 
     public async Task<(EErrorCode, UserInfo)> GetUserInfo(Int64 uid)
     {
-        UserInfo userInfo = await gameDb.GetUserByUid(uid);
+        UserInfo userInfo = await gameDb.GetUserByUserId(uid);
         if (userInfo is null)
         {
             return (EErrorCode.LoginFailUserNotExist, null);

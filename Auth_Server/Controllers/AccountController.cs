@@ -25,7 +25,7 @@ public class AccountController : ControllerBase
     {
         CreateAccountRes response = new();
 
-        response.Result = await authService.CreateAccountAsync(request.UserName, request.Password);
+        response.Result = await authService.CreateAccountAsync(request.Email, request.Password);
 
         return response;
     }
@@ -36,7 +36,7 @@ public class AccountController : ControllerBase
     {
         LoginAccountRes response = new();
 
-        response = await authService.VerifyUser(request.UserName, request.Password);
+        response = await authService.VerifyUser(request.Email, request.Password);
 
         return response;
     }

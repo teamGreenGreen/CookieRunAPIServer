@@ -23,7 +23,7 @@ public class VerifyTokenController : ControllerBase
     {
         VerifyTokenRes response = new();
 
-        response.Result = await authService.VerifyToken(request.AuthToken, request.Uid);
+        response.Result = await authService.VerifyToken(request.AuthToken, request.UserId);
 
         return response;
     }

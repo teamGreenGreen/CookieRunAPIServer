@@ -17,12 +17,12 @@ public class AuthService
         authServerAddress = configuration.GetSection("AuthServer").Value + "/VerifyToken"; 
     }
 
-    public async Task<EErrorCode> VerifyTokenToAuthServer(Int64 uid, string authToken)
+    public async Task<EErrorCode> VerifyTokenToAuthServer(Int64 userId, string authToken)
     {
         HttpClient client = new();
 
         // Post 요청을 보내고, Http 응답의 상태를 반환받음
-        HttpResponseMessage response = await client.PostAsJsonAsync(authServerAddress, new { AuthToken = authToken, Uid = uid });
+        HttpResponseMessage response = await client.PostAsJsonAsync(authServerAddress, new { AuthToken = authToken, UserId = userId });
         if(response is null || response.StatusCode != System.Net.HttpStatusCode.OK)
         {
             return EErrorCode.AuthFailInvalidResponse;
@@ -40,9 +40,9 @@ public class AuthService
     }
 
     // 유저가 존재하는지 확인
-    public async Task<(EErrorCode, Int64)> VerifyUser(Int64 uid)
+    public async Task<(EErrorCode, Int64)> VerifyUser(Int64 userId)
     {
-        UserInfo userInfo = await gameDb.GetUserByUid(uid);
+        UserInfo userInfo = await gameDb.GetUserByUserId(userId);
         if (userInfo is null)
         {
             return (EErrorCode.LoginFailUserNotExist, 0);

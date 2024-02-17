@@ -29,28 +29,28 @@ public class AccountDB : IDisposable
         dbConnection.Close();
     }
 
-    public async Task<int> InsertAccountAsync(string userName, string saltValue, string hashingPassword)
+    public async Task<int> InsertAccountAsync(string email, string saltValue, string hashingPassword)
     {
         return await queryFactory.Query("ACCOUNT").InsertAsync(new
         {
-            user_name = userName,
+            email = email,
             salt_value = saltValue,
             password = hashingPassword
         });
     }
 
-    public async Task<Account> GetAccount(string userName, string password)
+    public async Task<Account> GetAccount(string email, string password)
     {
         return await queryFactory.Query("ACCOUNT")
-            .Where("user_name", userName)
-            .Select("user_name AS UserName", "salt_value AS SaltValue", "Password", "Uid")
+            .Where("email", email)
+            .Select("email", "salt_value AS SaltValue", "password", "user_id AS UserId")
             .FirstOrDefaultAsync<Account>();
     }
 
-    public async Task<string> GetSaltValue(Int64 uid)
+    public async Task<string> GetSaltValue(Int64 userId)
     {
         return await queryFactory.Query("ACCOUNT")
-            .Where("uid", uid)
+            .Where("user_id", userId)
             .Select("salt_value")
             .FirstOrDefaultAsync<string>();
     }

@@ -14,38 +14,38 @@ public class AuthService
         this.accountDb = accountDb;
     }
 
-    public async Task<EErrorCode> CreateAccountAsync(string userName, string password)
+    public async Task<EErrorCode> CreateAccountAsync(string email, string password)
     {
         string saltValue = Security.GenerateSaltString();
         string hashingPassword = Security.GenerateHashingPassword(saltValue, password);
 
-        int count = await accountDb.InsertAccountAsync(userName, saltValue, hashingPassword);
+        int count = await accountDb.InsertAccountAsync(email, saltValue, hashingPassword);
 
         return count == 1 ? EErrorCode.None : EErrorCode.CreateAccountFail;
     }
 
-    public async Task<LoginAccountRes> VerifyUser(string userName, string password)
+    public async Task<LoginAccountRes> VerifyUser(string email, string password)
     {
         LoginAccountRes response = new();
 
-        Account account = await accountDb.GetAccount(userName, password);
+        Account account = await accountDb.GetAccount(email, password);
         if (account is null)
         {
             response.Result = EErrorCode.LoginFailUserNotExist;
             return response;
         }
 
-        response.Uid = account.Uid;
-        response.AuthToken = Security.GenerateAuthToken(account.SaltValue, response.Uid);
+        response.UserId = account.UserId;
+        response.AuthToken = Security.GenerateAuthToken(account.SaltValue, response.UserId);
 
         return response;
     }
 
-    public async Task<EErrorCode> VerifyToken(string authToken, Int64 uid)
+    public async Task<EErrorCode> VerifyToken(string authToken, Int64 userId)
     {
-        string saltValue = await accountDb.GetSaltValue(uid);
+        string saltValue = await accountDb.GetSaltValue(userId);
 
-        if (authToken == Security.GenerateAuthToken(saltValue, uid))
+        if (authToken == Security.GenerateAuthToken(saltValue, userId))
             return EErrorCode.None;
         else
             return EErrorCode.VerifyTokenFail;
