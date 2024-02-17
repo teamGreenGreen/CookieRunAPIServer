@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API_Game_Server.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("[controller]")]
     public class AttendanceController : ControllerBase
     {
         private readonly AttendanceService service;
@@ -26,9 +26,11 @@ namespace API_Game_Server.Controllers
             return res;
         }
         [HttpPost("request")]
-        public async Task RequestAttendance()
+        public async Task<AttendanceRes> RequestAttendance(AttendanceReq req)
         {
-            // TODO : 출석 요청
+            AttendanceRes res = new AttendanceRes();
+            res.Result = await service.RequestAttendance(req, res);
+            return res;
         }
     }
 }

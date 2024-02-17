@@ -1,13 +1,19 @@
+using API_Game_Server.Model.DAO;
 using API_Game_Server.Model.DTO;
+using API_Game_Server.Repository;
 
 namespace API_Game_Server.Services;
 
 public class AuthService
 {
-    string authServerAddress;
+    private GameDB gameDb;
+    private readonly RedisDB redisDb;
+    private string authServerAddress;
 
-    public AuthService(IConfiguration configuration)
+    public AuthService(IConfiguration configuration, GameDB gameDb, RedisDB redisDb)
     {
+        this.gameDb = gameDb;
+        this.redisDb = redisDb;
         authServerAddress = configuration.GetSection("AuthServer").Value + "/VerifyToken"; 
     }
 
@@ -31,5 +37,31 @@ public class AuthService
         }
 
         return EErrorCode.None;
+    }
+
+    // 유저가 존재하는지 확인
+    public async Task<(EErrorCode, Int64)> VerifyUser(Int64 uid)
+    {
+        UserInfo userInfo = await gameDb.GetUserByUid(uid);
+        if (userInfo is null)
+        {
+            return (EErrorCode.LoginFailUserNotExist, 0);
+        }
+
+        return (EErrorCode.None, userInfo.Uid);
+    }
+
+    public async Task<(EErrorCode, string)> GenerateSessionId(Int64 uid)
+    {
+        string sessionId = Security.GenerateSessionId();
+        
+        // 발급한 세션ID redis에 추가
+        // TODO : redis에 유저의 user_info:uid:uid값을 키로 sessionId를 저장해야 함
+        if(await redisDb.SetString(string.Format("uid:{0}", uid), sessionId))
+        {
+            return (EErrorCode.None, sessionId);
+        }
+
+        return (EErrorCode.LoginFailAddRedis, null);
     }
 }
