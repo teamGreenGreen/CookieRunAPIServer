@@ -27,12 +27,25 @@ public enum EErrorCode
     FriendReqAcceptFailTargetFriendCountExceeded = 2006,
 
     // GameResult 3000~3099
-    PlayerSpeedChangedDetected = 3000,
-    MoneyOrExpChangedDetected = 3001,
+    GameResultService_PlayerSpeedChangedDetected    = 3000,
+    GameResultService_MoneyOrExpChangedDetected     = 3001,
+    GameResultService_RewardCalcFail                = 3002,
+    GameResultService_AddLevelUpRewardFail          = 3003,
+    GameResultService_UserInfoUpdateError           = 3004,
 
-    // Mail 3100 3199
-    AddMailFail = 3101,
-    DeleteMailFail = 3102,
+    // GameDB_Mail 3100~3199
+    MailService_AddFail                              = 3101,
+    MailService_RemoveFail                           = 3102,
+    MailService_UpdateFail                           = 3103,
+    MailService_GetFail                              = 3104,
+    MailService_GetListFail                          = 3105,
+    MailService_GetInfoFail                          = 3106,
+    MailService_RewardFail                           = 3107,
+
+    // GameDB_GameResult 3200~3299
+    //GameDB_GetUserInfoFail = 3201,
+    //GameDB_UpdateUserInfoFail = 3202,
+    //GameDB_UpdateUserInfoFail = 3202,
 
     // Attendance 4000~4099
     AttendanceCountError = 4000,
