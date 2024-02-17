@@ -10,9 +10,10 @@ public enum EErrorCode
     Login_Fail = 1002,
     Auth_Fail_InvalidResponse = 1003,
     LoginFailUserNotExist = 1004,
+    LoginFailAddRedis = 1005,
     // 캐릭터 생성
-    CreateUserFailEmptyNickname = 1005,
-    CreateUserFailDuplicateNickname = 1006,
+    CreateUserFailEmptyNickname = 1006,
+    CreateUserFailDuplicateNickname = 1007,
 
     // Friend 2000~2999
     // 친구 신청 실패

@@ -40,6 +40,16 @@ public class LoginController : ControllerBase
             (errorCode, response.Uid) = await gameService.CreateUserGameData(request.Uid, request.UserName);
         }
 
+        // 토큰 발급, redis에 추가
+        (errorCode, response.AccessToken) = await authService.GenerateSessionId(request.Uid);
+        if(errorCode == EErrorCode.LoginFailAddRedis)
+        {
+            response.Result = errorCode;
+            return response;
+        }
+        
+        // TODO : 유저 데이터 로드
+
         return response;
     }
 }

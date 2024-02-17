@@ -7,11 +7,13 @@ namespace API_Game_Server.Services;
 public class AuthService
 {
     private GameDB gameDb;
+    private readonly RedisDB redisDb;
     private string authServerAddress;
 
-    public AuthService(IConfiguration configuration, GameDB gameDb)
+    public AuthService(IConfiguration configuration, GameDB gameDb, RedisDB redisDb)
     {
         this.gameDb = gameDb;
+        this.redisDb = redisDb;
         authServerAddress = configuration.GetSection("AuthServer").Value + "/VerifyToken"; 
     }
 
@@ -47,5 +49,19 @@ public class AuthService
         }
 
         return (EErrorCode.None, userInfo.Uid);
+    }
+
+    public async Task<(EErrorCode, string)> GenerateSessionId(Int64 uid)
+    {
+        string sessionId = Security.GenerateSessionId();
+        
+        // 발급한 토큰 redis에 추가
+        // TODO : redis에 유저의 user_info:uid:uid값을 키로 sessionId를 저장해야 함
+        if(await redisDb.SetString(string.Format("uid:{0}", uid), sessionId))
+        {
+            return (EErrorCode.None, sessionId);
+        }
+
+        return (EErrorCode.LoginFailAddRedis, null);
     }
 }
