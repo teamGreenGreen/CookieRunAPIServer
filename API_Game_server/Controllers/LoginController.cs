@@ -43,7 +43,7 @@ public class LoginController : ControllerBase
         }
 
         // 세션ID 발급, redis에 추가
-        (errorCode, response.SessionId) = await authService.GenerateSessionId(request.UserId);
+        (errorCode, response.SessionId) = await authService.GenerateSessionId(response.Uid);
         if(errorCode == EErrorCode.LoginFailAddRedis)
         {
             response.Result = errorCode;
