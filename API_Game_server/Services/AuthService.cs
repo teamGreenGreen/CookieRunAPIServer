@@ -58,19 +58,10 @@ public class AuthService
         // 발급한 세션ID redis에 추가
 
         // 1. gameDB에서 user_info 조회
-        ResultUserInfo user_info = await gameDb.GetUserInfo(uid);
-        if (user_info == null) return (EErrorCode.LoginFailAddRedis, null);
+        ResultUserInfo userInfo = await gameDb.GetUserInfo(uid);
+        if (userInfo == null) return (EErrorCode.LoginFailAddRedis, null);
         // 2. redis에 저장하기 위한 인스턴스 생성
-        RedisUserInfo redis_info = new RedisUserInfo
-        {
-            SessionId = sessionId,
-            UserName = user_info.UserName,
-            Level = user_info.Level,
-            Exp = user_info.Exp,
-            Money = user_info.Money,
-            Diamond = user_info.Diamond,
-            MaxScore = user_info.MaxScore,
-        };
+        RedisUserInfo redis_info = GenerateSessionInfo(sessionId, userInfo);
 
         // 3. redis에 유저 정보(세션) 업데이트
         try
@@ -83,5 +74,19 @@ public class AuthService
         }
 
         return (EErrorCode.LoginFailAddRedis, null);
+    }
+
+    public RedisUserInfo GenerateSessionInfo(string sessionId, ResultUserInfo userInfo)
+    {
+        return new RedisUserInfo
+        {
+            SessionId = sessionId,
+            UserName = userInfo.UserName,
+            Level = userInfo.Level,
+            Exp = userInfo.Exp,
+            Money = userInfo.Money,
+            Diamond = userInfo.Diamond,
+            MaxScore = userInfo.MaxScore,
+        };
     }
 }
