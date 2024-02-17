@@ -13,7 +13,7 @@ namespace API_Game_Server.Controllers
     public class RankController : ControllerBase
     {
         private readonly RankService service;
-        public RankController(RedisDB repository, RankService rankService)
+        public RankController(RankService rankService)
         {
             this.service = rankService;
         }

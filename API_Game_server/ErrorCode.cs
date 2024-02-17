@@ -24,20 +24,27 @@ public enum EErrorCode
     FriendReqFailMyFriendCountExceeded = 2004,
     // 친구 신청 수락 실패
     FriendReqAcceptFailMyFriendCountExceeded = 2005,
-    FriendReqAccepyFailTargetFriendCountExceeded = 2006,
+    FriendReqAcceptFailTargetFriendCountExceeded = 2006,
 
-    // GameResult 3000~3999
-    
+    // GameResult 3000~3099
     PlayerSpeedChangedDetected = 3000,
     MoneyOrExpChangedDetected = 3001,
+
+    // Mail 3100 3199
+    AddMailFail = 3101,
+    DeleteMailFail = 3102,
 
     // Attendance 4000~4099
     AttendanceCountError = 4000,
     AttendanceFailFindUser = 4001,
     AttendanceFailSetString = 4002,
+    AttendanceReqFail = 4003,
+    AttendanceUpdateFail = 4004,
+    NotExistUserDoingReward = 4005,
 
     // Rank 4100 ~ 4199
     IsNewbie = 4100,
     RankersNotExist = 4101,
     NoBodyInRanking = 4102,
+
 }
