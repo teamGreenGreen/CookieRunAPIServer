@@ -25,7 +25,7 @@ public class AuthService
         HttpResponseMessage response = await client.PostAsJsonAsync(authServerAddress, new { AuthToken = authToken, Uid = uid });
         if(response is null || response.StatusCode != System.Net.HttpStatusCode.OK)
         {
-            return EErrorCode.Auth_Fail_InvalidResponse;
+            return EErrorCode.AuthFailInvalidResponse;
         }
 
         // Http 요청에 대한 응답이 성공적으로 수신되었으면 Json 데이터를 읽어옴
@@ -33,7 +33,7 @@ public class AuthService
         // 다른 api 서버에서 보낸 에러 코드는 여기서 알 수 없기 때문에 포괄적인 에러 코드로 처리
         if (authResult is null || authResult.Result != EErrorCode.None)
         {
-            return EErrorCode.Auth_Fail_InvalidResponse;
+            return EErrorCode.AuthFailInvalidResponse;
         }
 
         return EErrorCode.None;

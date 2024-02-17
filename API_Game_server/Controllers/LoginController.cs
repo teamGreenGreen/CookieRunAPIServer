@@ -11,11 +11,13 @@ public class LoginController : ControllerBase
 {
     private readonly AuthService authService;
     private readonly GameService gameService;
+    private readonly UserService userService;
 
-    public LoginController(AuthService authService, GameService gameService)
+    public LoginController(AuthService authService, GameService gameService, UserService userService)
     {
         this.authService = authService;
         this.gameService = gameService;
+        this.userService = userService;
     }
 
     // 인증 서버에서 토큰 인증을 요청하고, 게임 서버에 로그인을 하고 유저 데이터를 불러온다.
@@ -48,7 +50,13 @@ public class LoginController : ControllerBase
             return response;
         }
         
-        // TODO : 유저 데이터 로드
+        // 유저 데이터 로드
+        (errorCode, response.UserInfo) = await userService.GetUserInfo(request.Uid);
+        if(errorCode == EErrorCode.LoginFailUserNotExist)
+        {
+            response.Result = errorCode;
+            return response;
+        }
 
         return response;
     }
