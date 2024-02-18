@@ -22,7 +22,7 @@ namespace API_Game_Server.Services
             this.validationService = validationService;
         }
 
-        public async Task<EErrorCode> GetMailListAsync(MailReq req, MailRes res)
+        public async Task<EErrorCode> GetMailListAsync(MailListReq req, MailListRes res)
         {
             // UID 얻기
             long uid = -1;
@@ -53,7 +53,7 @@ namespace API_Game_Server.Services
             return gameDB.AddMailAsync(id, sender, content, count, isRead, rewardType, expiredAt);
         }
 
-        public async Task<EErrorCode> OpenMailAsync(MailReq req)
+        public async Task<EErrorCode> OpenMailAsync(MailOpenReq req)
         {
             // UID 얻기
             long uid = -1;
@@ -75,7 +75,7 @@ namespace API_Game_Server.Services
             try
             {
                 mailInfo = await gameDB.GetMailAsync(uid, req.MailboxId);
-                userInfo = await gameDB.GetUserInfo(uid);
+                userInfo = await gameDB.GetUserInfoAsync(uid);
             }
             catch
             {
