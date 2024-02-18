@@ -89,7 +89,7 @@ namespace API_Game_Server.Services
             }
             catch
             {
-                return EErrorCode.MailService_RemoveFail;
+                return EErrorCode.MailService_OpenFail;
             }
 
             // (3) 보상하기
