@@ -19,10 +19,10 @@ namespace API_Game_Server.Controllers
         }
 
         [HttpPost]
-        public async Task<MailRes> PostAsync(MailReq req)
+        public async Task<MailOpenRes> PostAsync(MailOpenReq req)
         {
             //응답 객체 생성
-            MailRes res = new();
+            MailOpenRes res = new();
             res.Result = await mailService.OpenMailAsync(req);
             return res;
         }
