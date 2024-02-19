@@ -38,6 +38,7 @@ public class VerifyUserAuth
         if(errorCode != EErrorCode.None)
         {
             await ErrorResponse(context, StatusCodes.Status400BadRequest, errorCode);
+            return;
         }
 
         // Http 헤더에서 uid를 가져옴
@@ -45,6 +46,7 @@ public class VerifyUserAuth
         if (errorCode != EErrorCode.None)
         {
             await ErrorResponse(context, StatusCodes.Status400BadRequest, errorCode);
+            return;
         }
         
         // redis에서 uid에 해당하는 sessionId를 불러옴
@@ -52,12 +54,14 @@ public class VerifyUserAuth
         if(redisSessionId == null)
         {
             await ErrorResponse(context, StatusCodes.Status401Unauthorized, EErrorCode.SessionIdNotFound);
+            return;
         }
 
         // sessionId가 일치하는지 검사
         if(!IsValidSessionId(context, sessionId, redisSessionId))
         {
-            await ErrorResponse(context, StatusCodes.Status401Unauthorized, EErrorCode.AuthFailWrongSessionId);            
+            await ErrorResponse(context, StatusCodes.Status401Unauthorized, EErrorCode.AuthFailWrongSessionId);
+            return;
         }
 
         AuthInfo authInfo = new();
