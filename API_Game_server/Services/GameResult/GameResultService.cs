@@ -56,7 +56,7 @@ namespace API_Game_Server.Services
             {
                 // Redis에서 정보 찾기
                 string uidKey = string.Format("user_info:uid:{0}", stringUid);
-                string[] arrValues = { "user_name", "level", "exp", "money", "max_score", "diamond" };
+                string[] arrValues = { "UserName", "Level", "Exp", "Money", "MaxScore", "Diamond" };
                 string[] value = await redisDB.GetHash(uidKey, arrValues);
 
                 userInfo = new UserInfo
