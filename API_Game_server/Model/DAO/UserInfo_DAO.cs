@@ -10,5 +10,5 @@ public class UserInfo
     public int Money { get; set; }
     public int MaxScore { get; set; }
     public byte[] AcquiredCookieId { get; set; }
-    public int diamond { get; set; }
+    public int Diamond { get; set; }
 }

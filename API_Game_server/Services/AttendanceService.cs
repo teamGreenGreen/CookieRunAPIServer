@@ -159,7 +159,7 @@ namespace API_Game_Server.Services
         {
             int rewardCode = rewardItem.Code;
             int rewardCount = rewardItem.Count;
-            ResultUserInfo user = await gameDB.GetUserInfo(info.Uid);
+            UserInfo user = await gameDB.GetUserByUid(info.Uid);
             if (user == null) return EErrorCode.NotExistUserDoingReward;
             switch (rewardCode)
             {

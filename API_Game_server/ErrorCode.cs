@@ -36,15 +36,13 @@ public enum EErrorCode
     GameResultService_RewardCalcFail                = 3002,
     GameResultService_AddLevelUpRewardFail          = 3003,
     GameResultService_UserInfoUpdateError           = 3004,
+    GameResultService_RedisUpdateError              = 3005,
 
     // GameDB_Mail 3100~3199
-    MailService_AddFail                              = 3101,
-    MailService_RemoveFail                           = 3102,
-    MailService_UpdateFail                           = 3103,
-    MailService_GetFail                              = 3104,
-    MailService_GetListFail                          = 3105,
-    MailService_GetInfoFail                          = 3106,
-    MailService_RewardFail                           = 3107,
+    MailService_OpenFail                            = 3100,
+    MailService_GetListFail                         = 3101,
+    MailService_GetInfoFail                         = 3102,
+    MailService_RewardFail                          = 3103,
 
     // GameDB_GameResult 3200~3299
     //GameDB_GetUserInfoFail = 3201,

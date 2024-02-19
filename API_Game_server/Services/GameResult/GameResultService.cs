@@ -3,6 +3,7 @@ using API_Game_Server.Model.DAO;
 using API_Game_Server.Repository;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.VisualBasic.FileIO;
+using System;
 
 namespace API_Game_Server.Services
 {
@@ -23,7 +24,7 @@ namespace API_Game_Server.Services
 
         // 
         private readonly int maxMoney = 99999;
-        private ResultUserInfo userinfo;
+        private UserInfo userInfo;
         private int totalScore = 0;
         private int totalMoney = 0;
 
@@ -40,15 +41,38 @@ namespace API_Game_Server.Services
         {
             // UID 얻기
             long uid = -1;
+            string stringUid;
             try
             {
-                string stringUid = await validationService.GetUid(req.Token);
+                stringUid = await validationService.GetUid(req.Token);
                 uid = long.Parse(stringUid);
-                userinfo = await gameDB.GetUserInfoAsync(uid);
             }
             catch
             {
                 return EErrorCode.InvalidToken;
+            }
+
+            try
+            {
+                // Redis에서 정보 찾기
+                string uidKey = string.Format("user_info:uid:{0}", stringUid);
+                string[] arrValues = { "user_name", "level", "exp", "money", "max_score", "diamond" };
+                string[] value = await redisDB.GetHash(uidKey, arrValues);
+
+                userInfo = new UserInfo
+                {
+                    Uid = uid,
+                    UserName = value[0],
+                    Level = int.Parse(value[1]),
+                    Exp = int.Parse(value[2]),
+                    Money = int.Parse(value[3]),
+                    MaxScore = int.Parse(value[4]),
+                    Diamond = int.Parse(value[5])
+                };
+            }
+            catch
+            {
+                userInfo = await gameDB.GetUserByUid(uid);
             }
 
             // 플레이 검증
@@ -77,7 +101,7 @@ namespace API_Game_Server.Services
 
             try
             {
-                await UpdateUserInfoAsync(userinfo.Uid, newLevel, newExp, newMoney, userinfo.Diamond, newMaxScore, userinfo.UserName);
+                await UpdateUserInfoAsync(userInfo.Uid, newLevel, newExp, newMoney, userInfo.Diamond, newMaxScore, userInfo.UserName);
             }
             catch
             {
@@ -87,7 +111,7 @@ namespace API_Game_Server.Services
 
             try
             {
-                bool bLevelUp = newLevel != userinfo.Level;
+                bool bLevelUp = newLevel != userInfo.Level;
                 if (bLevelUp)
                     AddReward(newLevel);
             }
@@ -98,8 +122,27 @@ namespace API_Game_Server.Services
                 return EErrorCode.GameResultService_AddLevelUpRewardFail;
             }
 
+            RedisUserInfo redisUserInfo = new RedisUserInfo
+            {
+                SessionId = req.Token,
+                UserName = userInfo.UserName,
+                Level = newLevel,
+                Exp = newExp,
+                Money = newMoney,
+                MaxScore = newMaxScore,
+                Diamond = userInfo.Diamond
+            };
+
             // Redis 저장
-            await redisDB.SetZset("rank", userinfo.UserName, newMaxScore);
+            try
+            {
+                await redisDB.SetZset("rank", userInfo.UserName, newMaxScore);
+                await redisDB.SetHash($"user_info:uid:{userInfo.Uid}", redisUserInfo);
+            }
+            catch
+            {
+                return EErrorCode.GameResultService_RedisUpdateError;
+            }
 
             res.Exp = newExp;
             res.Level = newLevel;
@@ -110,10 +153,9 @@ namespace API_Game_Server.Services
 
         public int CalcMaxScore()
         {
-            int newMaxScore = userinfo.MaxScore;
+            int newMaxScore = userInfo.MaxScore;
             if (newMaxScore < totalScore)
             {
-                // Redis 랭킹 업데이트
                 newMaxScore = totalScore;
             }
 
@@ -123,27 +165,27 @@ namespace API_Game_Server.Services
         public void AddReward(int newLevel)
         {
             int rewardCount = 0;
-            for (int i = userinfo.Level + 1; i <= newLevel; i++)
+            for (int i = userInfo.Level + 1; i <= newLevel; i++)
             {
                 rewardCount += i * 10;
                 DateTime sevenDaysLater = DateTime.Now.AddDays(7);
-                _ = mailService.AddMailAsync(userinfo.Uid, "운영자", "레벨업 보상", rewardCount, false, "diamond", sevenDaysLater);
+                _ = mailService.AddMailAsync(userInfo.Uid, "운영자", "레벨" + i + "달성을 축하합니다.", rewardCount, false, "diamond", sevenDaysLater);
             }
         }
 
         public int CalcMoney()
         {
-            return userinfo.Money + totalMoney < maxMoney ? userinfo.Money + totalMoney : maxMoney;
+            return userInfo.Money + totalMoney < maxMoney ? userInfo.Money + totalMoney : maxMoney;
         }
 
         public int CalcExp()
         {
-            return userinfo.Exp + totalScore;
+            return userInfo.Exp + totalScore;
         }
 
         public int CalcLevel(int newExp)
         {
-            int newLevel = userinfo.Level;
+            int newLevel = userInfo.Level;
             for (int level = newLevel; level <= userLevelData.Count; level++)
             {
                 if (newExp < userLevelData[level].MinExp)
@@ -158,9 +200,9 @@ namespace API_Game_Server.Services
 
         public Task UpdateUserInfoAsync(long uid, int newLevel, int newExp, int newMoney, int newDiamond, int newMaxScore, string userName)
         {
-            if (newMoney != userinfo.Money || newExp != userinfo.Exp || newLevel != userinfo.Level || newMaxScore != userinfo.MaxScore)
+            if (newMoney != userInfo.Money || newExp != userInfo.Exp || newLevel != userInfo.Level || newMaxScore != userInfo.MaxScore)
             {
-                return gameDB.UpdateUserInfoAsync(uid, newLevel, newExp, newMoney, userinfo.Diamond, newMaxScore, userinfo.UserName);
+                return gameDB.UpdateUserInfoAsync(uid, newLevel, newExp, newMoney, userInfo.Diamond, newMaxScore, userInfo.UserName);
             }
 
             return Task.CompletedTask;
