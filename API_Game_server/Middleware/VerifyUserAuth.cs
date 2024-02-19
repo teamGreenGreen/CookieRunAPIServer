@@ -1,5 +1,7 @@
+using API_Game_Server.Model.DAO;
 using API_Game_Server.Repository;
 using Microsoft.Extensions.Primitives;
+using System;
 using System.Text.Json;
 
 namespace API_Game_Server.Middleware;
@@ -29,25 +31,40 @@ public class VerifyUserAuth
 
         EErrorCode errorCode;
         string sessionId;
-        string uid;
+        Int64 uid;
 
+        // Http 헤더에서 sessionId를 가져옴
         (errorCode, sessionId) = GetSessionIdFromHeader(context);
-        if(sessionId == null)
+        if(errorCode != EErrorCode.None)
         {
             await ErrorResponse(context, StatusCodes.Status400BadRequest, errorCode);
         }
 
-        // TODO : uid는 Int64? string? Redis에 키를 넣을 때 어떤 타입으로 넣을지 알아야 함
+        // Http 헤더에서 uid를 가져옴
         (errorCode, uid) = GetUidFromHeader(context);
-        if (uid == null)
+        if (errorCode != EErrorCode.None)
         {
             await ErrorResponse(context, StatusCodes.Status400BadRequest, errorCode);
         }
+        
+        // redis에서 uid에 해당하는 sessionId를 불러옴
+        string redisSessionId = await redisDb.GetSessionIdAsync(uid);
+        if(redisSessionId == null)
+        {
+            await ErrorResponse(context, StatusCodes.Status401Unauthorized, EErrorCode.SessionIdNotFound);
+        }
 
-        // TODO : Redis에서 uid를 키로 유저 인증 데이터(uid, sessionId) 불러옴
-        // uid에 해당하는 데이터가 없으면 에러 반환 후 종료
+        // sessionId가 일치하는지 검사
+        if(!IsValidSessionId(context, sessionId, redisSessionId))
+        {
+            await ErrorResponse(context, StatusCodes.Status401Unauthorized, EErrorCode.AuthFailWrongSessionId);            
+        }
 
-        // TODO : sessionId가 일치하는지 검사
+        AuthInfo authInfo = new();
+        authInfo.Uid = uid;
+        authInfo.SessionId = sessionId;
+
+        context.Items[nameof(AuthInfo)] = authInfo;
 
         await next(context);
     }
@@ -64,16 +81,16 @@ public class VerifyUserAuth
         return (EErrorCode.SessionIdNotProvided, null);
     }
 
-    private (EErrorCode, string) GetUidFromHeader(HttpContext context)
+    private (EErrorCode, int) GetUidFromHeader(HttpContext context)
     {
         StringValues uid;
 
-        if (context.Request.Headers.TryGetValue("uid", out uid))
+        if (context.Request.Headers.TryGetValue("Uid", out uid))
         {           
-            return (EErrorCode.None, uid);
+            return (EErrorCode.None, int.Parse(uid));
         }
 
-        return (EErrorCode.UidNotProvided, null);
+        return (EErrorCode.UidNotProvided, 0);
     }
 
 
@@ -86,5 +103,15 @@ public class VerifyUserAuth
         });
 
         await context.Response.WriteAsync(errorJsonResponse);
+    }
+
+    private bool IsValidSessionId(HttpContext context, string sessionId, string redisSessionId)
+    {
+        if (string.CompareOrdinal(sessionId, redisSessionId) == 0)
+        {
+            return true;
+        }
+
+        return false;
     }
 }

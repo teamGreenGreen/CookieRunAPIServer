@@ -59,7 +59,10 @@ public class AuthService
 
         // 1. gameDB에서 user_info 조회
         ResultUserInfo userInfo = await gameDb.GetUserInfo(uid);
-        if (userInfo == null) return (EErrorCode.LoginFailAddRedis, null);
+        if (userInfo == null)
+        {
+            return (EErrorCode.LoginFailAddRedis, null);
+        }
         // 2. redis에 저장하기 위한 인스턴스 생성
         RedisUserInfo redis_info = GenerateSessionInfo(sessionId, userInfo);
 
@@ -73,7 +76,7 @@ public class AuthService
             return (EErrorCode.LoginFailAddRedis, null);
         }
 
-        return (EErrorCode.LoginFailAddRedis, null);
+        return (EErrorCode.None, sessionId);
     }
 
     public RedisUserInfo GenerateSessionInfo(string sessionId, ResultUserInfo userInfo)

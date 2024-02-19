@@ -16,6 +16,8 @@ public enum EErrorCode
     CreateUserFailDuplicateNickname = 1007,
     SessionIdNotProvided = 1008,
     UidNotProvided = 1009,
+    SessionIdNotFound = 1010,
+    AuthFailWrongSessionId = 1011,
 
     // Friend 2000~2999
     // 친구 신청 실패

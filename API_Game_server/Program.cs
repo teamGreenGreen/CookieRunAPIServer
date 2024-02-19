@@ -34,7 +34,7 @@ builder.Services.AddTransient<RankService>();
 // Add services about redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(opt =>
     ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));
-builder.Services.AddScoped<RedisDB>();
+builder.Services.AddTransient<RedisDB>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
