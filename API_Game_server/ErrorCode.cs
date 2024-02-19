@@ -39,6 +39,7 @@ public enum EErrorCode
     MailService_GetListFail                         = 3101,
     MailService_GetInfoFail                         = 3102,
     MailService_RewardFail                          = 3103,
+    MailService_CreateMailBoxFail                   = 3104,
 
     // GameDB_GameResult 3200~3299
     //GameDB_GetUserInfoFail = 3201,
