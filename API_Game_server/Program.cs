@@ -34,10 +34,13 @@ builder.Services.AddTransient<RankService>();
 // Add services about redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(opt =>
     ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));
-builder.Services.AddScoped<RedisDB>();
+builder.Services.AddTransient<RedisDB>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+// 미들웨어 추가
+app.UseMiddleware<API_Game_Server.Middleware.VerifyUserAuth>();
 
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();

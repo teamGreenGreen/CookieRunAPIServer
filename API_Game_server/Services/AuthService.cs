@@ -73,7 +73,7 @@ public class AuthService
             return (EErrorCode.LoginFailAddRedis, null);
         }
 
-        return (EErrorCode.LoginFailAddRedis, null);
+        return (EErrorCode.None, sessionId);
     }
 
     public RedisUserInfo GenerateSessionInfo(string sessionId, UserInfo userInfo)
