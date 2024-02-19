@@ -58,7 +58,7 @@ public class AuthService
         // 발급한 세션ID redis에 추가
 
         // 1. gameDB에서 user_info 조회
-        ResultUserInfo userInfo = await gameDb.GetUserInfoAsync(uid);
+        UserInfo userInfo = await gameDb.GetUserByUid(uid);
         if (userInfo == null) return (EErrorCode.LoginFailAddRedis, null);
         // 2. redis에 저장하기 위한 인스턴스 생성
         RedisUserInfo redis_info = GenerateSessionInfo(sessionId, userInfo);
@@ -76,7 +76,7 @@ public class AuthService
         return (EErrorCode.LoginFailAddRedis, null);
     }
 
-    public RedisUserInfo GenerateSessionInfo(string sessionId, ResultUserInfo userInfo)
+    public RedisUserInfo GenerateSessionInfo(string sessionId, UserInfo userInfo)
     {
         return new RedisUserInfo
         {

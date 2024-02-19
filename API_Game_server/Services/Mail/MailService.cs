@@ -69,13 +69,13 @@ namespace API_Game_Server.Services
 
             // 보상하기
             MailInfo mailInfo;
-            ResultUserInfo userInfo;
+            UserInfo userInfo;
 
             // (1) 메일, 유저 정보 가져오기
             try
             {
                 mailInfo = await gameDB.GetMailAsync(uid, req.MailboxId);
-                userInfo = await gameDB.GetUserInfoAsync(uid);
+                userInfo = await gameDB.GetUserByUid(uid);
             }
             catch
             {

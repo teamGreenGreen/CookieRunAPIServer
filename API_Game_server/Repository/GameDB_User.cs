@@ -14,6 +14,14 @@ public partial class GameDB : IDisposable
             .FirstOrDefaultAsync<UserInfo>();
     }
 
+    public async Task<UserInfo> GetUserByUid(Int64 uid)
+    {
+        return await queryFactory.Query("USER_INFO")
+            .Select("uid", "user_id as UserId", "user_name as UserName", "level", "exp", "money", "max_score AS MaxScore", "acquired_cookie_id AS AcquiredCookieId", "diamond")
+            .Where("uid", uid)
+            .FirstOrDefaultAsync<UserInfo>();
+    }
+
     public async Task<UserInfo> GetUserByUserName(string userName)
     {
         return await queryFactory.Query("USER_INFO")

@@ -24,7 +24,7 @@ namespace API_Game_Server.Services
 
         // 
         private readonly int maxMoney = 99999;
-        private ResultUserInfo userInfo;
+        private UserInfo userInfo;
         private int totalScore = 0;
         private int totalMoney = 0;
 
@@ -59,7 +59,7 @@ namespace API_Game_Server.Services
                 string[] arrValues = { "user_name", "level", "exp", "money", "max_score", "diamond" };
                 string[] value = await redisDB.GetHash(uidKey, arrValues);
 
-                userInfo = new ResultUserInfo
+                userInfo = new UserInfo
                 {
                     Uid = uid,
                     UserName = value[0],
@@ -72,7 +72,7 @@ namespace API_Game_Server.Services
             }
             catch
             {
-                userInfo = await gameDB.GetUserInfoAsync(uid);
+                userInfo = await gameDB.GetUserByUid(uid);
             }
 
             // 플레이 검증
