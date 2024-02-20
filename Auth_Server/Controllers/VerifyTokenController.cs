@@ -10,9 +10,9 @@ namespace Auth_Server.Controllers;
 [ApiController]
 public class VerifyTokenController : ControllerBase
 {
-    private readonly AuthService authService;
+    private readonly IAuthService authService;
 
-    public VerifyTokenController(AuthService authService)
+    public VerifyTokenController(IAuthService authService)
     {
         this.authService = authService;
     }
