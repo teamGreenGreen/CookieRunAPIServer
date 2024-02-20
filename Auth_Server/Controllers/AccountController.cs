@@ -12,9 +12,9 @@ namespace Auth_Server.Controllers;
 [ApiController]
 public class AccountController : ControllerBase
 {
-    private readonly AuthService authService;
+    private readonly IAuthService authService;
 
-    public AccountController(AuthService authService)
+    public AccountController(IAuthService authService)
     {
         this.authService = authService;
     }
