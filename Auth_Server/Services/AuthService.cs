@@ -2,6 +2,7 @@ using API_Game_Server;
 using Auth_Server.Model.DAO;
 using Auth_Server.Model.DTO;
 using Auth_Server.Repository;
+using MySqlConnector;
 
 namespace Auth_Server.Services;
 
@@ -16,12 +17,19 @@ public class AuthService : IAuthService
 
     public async Task<EErrorCode> CreateAccountAsync(string email, string password)
     {
-        string saltValue = Security.GenerateSaltString();
-        string hashingPassword = Security.GenerateHashingPassword(saltValue, password);
+        try
+        {
+            string saltValue = Security.GenerateSaltString();
+            string hashingPassword = Security.GenerateHashingPassword(saltValue, password);
 
-        int count = await accountDb.InsertAccountAsync(email, saltValue, hashingPassword);
+            int count = await accountDb.InsertAccountAsync(email, saltValue, hashingPassword);
 
-        return count == 1 ? EErrorCode.None : EErrorCode.CreateAccountFail;
+            return count == 1 ? EErrorCode.None : EErrorCode.CreateAccountFail;
+        }
+        catch (Exception ex)
+        {
+            return EErrorCode.CreateAccountFail;
+        }
     }
 
     public async Task<LoginAccountRes> VerifyUser(string email, string password)
