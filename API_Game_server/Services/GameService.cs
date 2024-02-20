@@ -27,4 +27,25 @@ public class GameService
 
         return (EErrorCode.None, await gameDb.InsertUserGetId(userId, userName));
     }
+
+    public async Task<EErrorCode> CreateUserMailBox(Int64 uid)
+    {
+        DateTime sevenDaysLater = DateTime.Now.AddDays(7);
+        string sender = "운영자";
+        string content = "신규 유저 보상";
+        int count = 100;
+        bool isRead = false;
+        string rewardType = "diamond";
+
+        try
+        {
+            await gameDb.AddMailAsync(uid, sender, content, count, isRead, rewardType, sevenDaysLater);
+        }
+        catch
+        {
+            return EErrorCode.MailService_CreateMailBoxFail;
+        }
+
+        return EErrorCode.None;
+    }
 }

@@ -40,6 +40,13 @@ public class LoginController : ControllerBase
         if(errorCode == EErrorCode.LoginFailUserNotExist)
         {
             (errorCode, response.Uid) = await gameService.CreateUserGameData(request.UserId, request.UserName);
+
+            // 유저 생성이 잘 됐으면
+            if (errorCode == EErrorCode.None)
+            {
+                // 신규 유저 보상 지급
+                await gameService.CreateUserMailBox(response.Uid);
+            }
         }
 
         // 세션ID 발급, redis에 추가
