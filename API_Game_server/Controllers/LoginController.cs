@@ -1,5 +1,6 @@
 using API_Game_Server.Model.DTO;
 using API_Game_Server.Services;
+using API_Game_Server.Services.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,11 +10,11 @@ namespace API_Game_Server.Controllers;
 [ApiController]
 public class LoginController : ControllerBase
 {
-    private readonly AuthService authService;
-    private readonly GameService gameService;
-    private readonly UserService userService;
+    private readonly IAuthService authService;
+    private readonly IGameService gameService;
+    private readonly IUserService userService;
 
-    public LoginController(AuthService authService, GameService gameService, UserService userService)
+    public LoginController(IAuthService authService, IGameService gameService, IUserService userService)
     {
         this.authService = authService;
         this.gameService = gameService;

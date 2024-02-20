@@ -1,11 +1,13 @@
 using API_Game_Server.Repository;
+using API_Game_Server.Repository.Interface;
+using API_Game_Server.Services.Interface;
 
 namespace API_Game_Server.Services
 {
-    public class ValidationService
+    public class ValidationService : IValidationService
     {
-        private readonly RedisDB redisDB;
-        public ValidationService(RedisDB _redisDB)
+        private readonly IRedisDB redisDB;
+        public ValidationService(IRedisDB _redisDB)
         {
             redisDB = _redisDB;
         }

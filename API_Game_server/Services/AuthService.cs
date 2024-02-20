@@ -1,16 +1,18 @@
 using API_Game_Server.Model.DAO;
 using API_Game_Server.Model.DTO;
 using API_Game_Server.Repository;
+using API_Game_Server.Repository.Interface;
+using API_Game_Server.Services.Interface;
 
 namespace API_Game_Server.Services;
 
-public class AuthService
+public class AuthService : IAuthService
 {
-    private GameDB gameDb;
-    private readonly RedisDB redisDb;
+    private IGameDB gameDb;
+    private readonly IRedisDB redisDb;
     private string authServerAddress;
 
-    public AuthService(IConfiguration configuration, GameDB gameDb, RedisDB redisDb)
+    public AuthService(IConfiguration configuration, IGameDB gameDb, IRedisDB redisDb)
     {
         this.gameDb = gameDb;
         this.redisDb = redisDb;

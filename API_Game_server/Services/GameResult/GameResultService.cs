@@ -4,10 +4,12 @@ using API_Game_Server.Repository;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.VisualBasic.FileIO;
 using System;
+using API_Game_Server.Services.Interface;
+using API_Game_Server.Repository.Interface;
 
 namespace API_Game_Server.Services
 {
-    public class GameResultService
+    public class GameResultService : IGameResultService
     {
         // GameData
         private readonly Dictionary<int/*ItemID*/, ItemData> itemData = new Dictionary<int, ItemData>();
@@ -15,12 +17,12 @@ namespace API_Game_Server.Services
         private readonly Dictionary<int/*CookieID*/, CookieData> cookieData = new Dictionary<int, CookieData>();
 
         // DB
-        private readonly GameDB gameDB;
-        private readonly RedisDB redisDB;
+        private readonly IGameDB gameDB;
+        private readonly IRedisDB redisDB;
 
         // Service
-        private readonly ValidationService validationService;
-        private readonly MailService mailService;
+        private readonly IValidationService validationService;
+        private readonly IMailService mailService;
 
         // 
         private readonly int maxMoney = 99999;
@@ -28,7 +30,7 @@ namespace API_Game_Server.Services
         private int totalScore = 0;
         private int totalMoney = 0;
 
-        public GameResultService(GameDB gameDB, RedisDB redisDB, ValidationService validationService, MailService mailService)
+        public GameResultService(IGameDB gameDB, IRedisDB redisDB, IValidationService validationService, IMailService mailService)
         {
             this.gameDB = gameDB;
             this.redisDB = redisDB;

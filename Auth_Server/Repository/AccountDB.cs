@@ -7,7 +7,7 @@ using System.Data;
 
 namespace Auth_Server.Repository;
 
-public class AccountDB : IDisposable
+public class AccountDB : IAccountDB
 {
     private readonly IOptions<DBConfig> dbConfig;
     private readonly IDbConnection dbConnection;

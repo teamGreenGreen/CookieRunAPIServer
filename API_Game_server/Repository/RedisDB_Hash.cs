@@ -1,3 +1,4 @@
+using API_Game_Server.Repository.Interface;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -9,7 +10,7 @@ using static System.Formats.Asn1.AsnWriter;
 
 namespace API_Game_Server.Repository
 {
-    public partial class RedisDB
+    public partial class RedisDB : IRedisDB
     {
         public async Task SetHash<T>(string key, T obj) where T : class
         {

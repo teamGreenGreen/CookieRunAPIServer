@@ -9,10 +9,11 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Threading;
 using System.Reflection;
 using Microsoft.AspNetCore.Http.HttpResults;
+using API_Game_Server.Repository.Interface;
 
 namespace API_Game_Server.Repository;
 
-public partial class GameDB : IDisposable
+public partial class GameDB : IGameDB
 {
     public Task<IEnumerable<MailInfo>> GetMailListAsync(long id)
     {

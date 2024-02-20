@@ -4,18 +4,20 @@ using API_Game_Server.Repository;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Collections.Generic;
 using SqlKata.Execution;
+using API_Game_Server.Services.Interface;
+using API_Game_Server.Repository.Interface;
 
 namespace API_Game_Server.Services
 {
-    public class MailService
+    public class MailService : IMailService
     {
         // DB
-        private readonly GameDB gameDB;
-        private readonly RedisDB redisDB;
+        private readonly IGameDB gameDB;
+        private readonly IRedisDB redisDB;
 
-        private readonly ValidationService validationService;
+        private readonly IValidationService validationService;
 
-        public MailService(GameDB gameDB, RedisDB redisDB, ValidationService validationService)
+        public MailService(IGameDB gameDB, IRedisDB redisDB, IValidationService validationService)
         {
             this.gameDB = gameDB;
             this.redisDB = redisDB;
