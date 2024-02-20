@@ -1,5 +1,6 @@
 using API_Game_Server.Model.DAO;
 using API_Game_Server.Repository;
+using API_Game_Server.Repository.Interface;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Text.Json;
@@ -8,10 +9,10 @@ namespace API_Game_Server.Middleware;
 
 public class VerifyUserAuth
 {
-    private readonly RedisDB redisDb;
+    private readonly IRedisDB redisDb;
     private readonly RequestDelegate next;
 
-    public VerifyUserAuth(RequestDelegate next, RedisDB redisDb)
+    public VerifyUserAuth(RequestDelegate next, IRedisDB redisDb)
     {
         this.redisDb = redisDb;
         this.next = next;  

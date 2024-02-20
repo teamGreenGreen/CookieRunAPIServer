@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
 using API_Game_Server.Services;
+using API_Game_Server.Services.Interface;
 
 namespace API_Game_Server.Controllers
 {
@@ -12,8 +13,8 @@ namespace API_Game_Server.Controllers
     [Route("[controller]")]
     public class RankController : ControllerBase
     {
-        private readonly RankService service;
-        public RankController(RankService rankService)
+        private readonly IRankService service;
+        public RankController(IRankService rankService)
         {
             this.service = rankService;
         }

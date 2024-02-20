@@ -1,9 +1,10 @@
 using API_Game_Server.Model.DAO;
+using API_Game_Server.Repository.Interface;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 
 namespace API_Game_Server.Repository;
 
-public partial class RedisDB
+public partial class RedisDB : IRedisDB
 {
     private const string authUid = "user_info:uid:";
 

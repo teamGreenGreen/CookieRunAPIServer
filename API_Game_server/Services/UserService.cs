@@ -1,13 +1,15 @@
 using API_Game_Server.Model.DAO;
 using API_Game_Server.Repository;
+using API_Game_Server.Repository.Interface;
+using API_Game_Server.Services.Interface;
 
 namespace API_Game_Server.Services;
 
-public class UserService
+public class UserService : IUserService
 {
-    readonly GameDB gameDb;
+    readonly IGameDB gameDb;
 
-    public UserService(GameDB gameDb)
+    public UserService(IGameDB gameDb)
     {
         this.gameDb = gameDb;
     }

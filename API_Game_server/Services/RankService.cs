@@ -1,14 +1,16 @@
 using API_Game_Server.Model.DTO;
 using API_Game_Server.Repository;
+using API_Game_Server.Repository.Interface;
+using API_Game_Server.Services.Interface;
 using StackExchange.Redis;
 
 namespace API_Game_Server.Services
 {
-    public class RankService
+    public class RankService : IRankService
     {
-        private readonly RedisDB redisDB;
-        private readonly ValidationService validationService;
-        public RankService(RedisDB redisDB, ValidationService validationService)
+        private readonly IRedisDB redisDB;
+        private readonly IValidationService validationService;
+        public RankService(IRedisDB redisDB, IValidationService validationService)
         {
             this.redisDB = redisDB;
             this.validationService = validationService;

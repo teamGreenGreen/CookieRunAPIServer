@@ -1,13 +1,15 @@
 using API_Game_Server.Model.DAO;
 using API_Game_Server.Repository;
+using API_Game_Server.Repository.Interface;
+using API_Game_Server.Services.Interface;
 
 namespace API_Game_Server.Services;
 
-public class GameService
+public class GameService : IGameService
 {
-    private GameDB gameDb;
+    private IGameDB gameDb;
 
-    public GameService(GameDB gameDb)
+    public GameService(IGameDB gameDb)
     {
         this.gameDb = gameDb;
     }

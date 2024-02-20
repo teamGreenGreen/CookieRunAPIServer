@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using API_Game_Server.Repository;
 using Microsoft.AspNetCore.Http;
 using API_Game_Server.Services;
+using API_Game_Server.Services.Interface;
 
 namespace API_Game_Server.Controllers
 {
@@ -11,9 +12,9 @@ namespace API_Game_Server.Controllers
     [ApiController]
     public class MailOpenController : ControllerBase
     {
-        readonly MailService mailService;
+        readonly IMailService mailService;
 
-        public MailOpenController(MailService mailService)
+        public MailOpenController(IMailService mailService)
         {
             this.mailService = mailService;
         }

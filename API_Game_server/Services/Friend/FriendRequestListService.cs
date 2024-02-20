@@ -2,15 +2,17 @@ using API_Game_Server.Repository;
 using API_Game_Server.Model.DTO;
 using API_Game_Server.Model.DAO;
 using System;
+using API_Game_Server.Services.Interface;
+using API_Game_Server.Repository.Interface;
 
 namespace API_Game_Server.Services
 {
-    public class FriendRequestListService
+    public class FriendRequestListService : IFriendRequestListService
     {
-        private readonly GameDB gameDB;
-        private readonly RedisDB redisDB;
-        private readonly ValidationService validationService;
-        public FriendRequestListService(GameDB _gameDB, RedisDB _redisDB, ValidationService _validationService)
+        private readonly IGameDB gameDB;
+        private readonly IRedisDB redisDB;
+        private readonly IValidationService validationService;
+        public FriendRequestListService(IGameDB _gameDB, IRedisDB _redisDB, IValidationService _validationService)
         {
             gameDB = _gameDB;
             redisDB = _redisDB;

@@ -5,10 +5,11 @@ using MySqlConnector;
 using SqlKata;
 using SqlKata.Execution;
 using System.Data;
+using API_Game_Server.Repository.Interface;
 
 namespace API_Game_Server.Repository;
 
-public partial class GameDB : IDisposable
+public partial class GameDB : IGameDB
 {
     // 설정 값을 관리하고 주입하기 위한 인터페이스
     private readonly IOptions<DBConfig> dbConfig;

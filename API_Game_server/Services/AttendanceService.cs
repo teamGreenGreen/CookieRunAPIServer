@@ -2,18 +2,20 @@ using API_Game_Server.Model;
 using API_Game_Server.Model.DAO;
 using API_Game_Server.Model.DTO;
 using API_Game_Server.Repository;
+using API_Game_Server.Repository.Interface;
+using API_Game_Server.Services.Interface;
 using Microsoft.VisualBasic.FileIO;
 using StackExchange.Redis;
 using System.Runtime;
 
 namespace API_Game_Server.Services
 {
-    public class AttendanceService
+    public class AttendanceService : IAttendanceService
     {
-        private readonly GameDB gameDB;
-        private readonly RedisDB redisDB;
-        private readonly ValidationService validation;
-        public AttendanceService(GameDB gameDB, RedisDB redisDB, ValidationService validation)
+        private readonly IGameDB gameDB;
+        private readonly IRedisDB redisDB;
+        private readonly IValidationService validation;
+        public AttendanceService(IGameDB gameDB, IRedisDB redisDB, IValidationService validation)
         {
             this.gameDB = gameDB;
             this.redisDB = redisDB;

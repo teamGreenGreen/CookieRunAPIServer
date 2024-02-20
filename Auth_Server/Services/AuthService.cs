@@ -5,11 +5,11 @@ using Auth_Server.Repository;
 
 namespace Auth_Server.Services;
 
-public class AuthService
+public class AuthService : IAuthService
 {
-    private readonly AccountDB accountDb;
+    private readonly IAccountDB accountDb;
 
-    public AuthService(AccountDB accountDb)
+    public AuthService(IAccountDB accountDb)
     {
         this.accountDb = accountDb;
     }

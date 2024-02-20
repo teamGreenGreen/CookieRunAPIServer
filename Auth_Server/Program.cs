@@ -10,8 +10,8 @@ IConfiguration configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.Configure<DBConfig>(configuration.GetSection(nameof(DBConfig)));
 
-builder.Services.AddTransient<AccountDB>();
-builder.Services.AddTransient<AuthService>();
+builder.Services.AddTransient<IAccountDB, AccountDB>();
+builder.Services.AddTransient<IAuthService, AuthService>();
 
 builder.Services.AddControllers();
 

@@ -1,10 +1,11 @@
 using API_Game_Server.Model.DAO;
+using API_Game_Server.Repository.Interface;
 using SqlKata.Execution;
 using System.Text;
 
 namespace API_Game_Server.Repository;
 
-public partial class GameDB : IDisposable
+public partial class GameDB : IGameDB
 {
     public async Task<UserInfo> GetUserByUserId(Int64 userId)
     {

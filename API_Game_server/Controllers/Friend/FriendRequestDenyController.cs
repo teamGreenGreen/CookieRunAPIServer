@@ -4,6 +4,7 @@ using API_Game_Server.Repository;
 using API_Game_Server.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using API_Game_Server.Services.Interface;
 
 namespace API_Game_Server.Controllers
 {
@@ -11,8 +12,8 @@ namespace API_Game_Server.Controllers
     [ApiController]
     public class FriendRequestDenyController : ControllerBase
     {
-        private readonly FriendRequestDenyService friendRequestDenyService;
-        public FriendRequestDenyController(FriendRequestDenyService _friendRequestDenyService)
+        private readonly IFriendRequestDenyService friendRequestDenyService;
+        public FriendRequestDenyController(IFriendRequestDenyService _friendRequestDenyService)
         {
             friendRequestDenyService = _friendRequestDenyService;
         }

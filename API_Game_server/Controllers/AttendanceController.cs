@@ -2,6 +2,7 @@ using API_Game_Server.Model.DAO;
 using API_Game_Server.Model.DTO;
 using API_Game_Server.Repository;
 using API_Game_Server.Services;
+using API_Game_Server.Services.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +12,9 @@ namespace API_Game_Server.Controllers
     [Route("[controller]")]
     public class AttendanceController : ControllerBase
     {
-        private readonly AttendanceService service;
+        private readonly IAttendanceService service;
         private readonly short maxDate = 32;
-        public AttendanceController(AttendanceService _service)
+        public AttendanceController(IAttendanceService _service)
         {
             service = _service;
         }

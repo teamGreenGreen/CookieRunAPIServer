@@ -5,10 +5,11 @@ using MySqlConnector;
 using SqlKata;
 using SqlKata.Execution;
 using System.Data;
+using API_Game_Server.Repository.Interface;
 
 namespace API_Game_Server.Repository;
 
-public partial class GameDB : IDisposable
+public partial class GameDB : IGameDB
 {
     public async Task<FriendInfo> GetFriendInfo(string friendName)
     {
