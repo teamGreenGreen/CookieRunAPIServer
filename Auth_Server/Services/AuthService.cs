@@ -26,6 +26,15 @@ public class AuthService : IAuthService
 
             return count == 1 ? EErrorCode.None : EErrorCode.CreateAccountFail;
         }
+        catch (MySqlException ex)
+        {
+            if (ex.Number == 1062)
+            {
+                return EErrorCode.CreateAccountFailDuplicate;
+            }
+
+            return EErrorCode.CreateAccountFail;
+        }
         catch (Exception ex)
         {
             return EErrorCode.CreateAccountFail;
