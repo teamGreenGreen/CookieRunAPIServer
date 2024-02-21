@@ -39,7 +39,7 @@ public class AccountDB : IAccountDB
         });
     }
 
-    public async Task<Account> GetAccount(string email, string password)
+    public async Task<Account> GetAccount(string email)
     {
         return await queryFactory.Query("ACCOUNT")
             .Where("email", email)

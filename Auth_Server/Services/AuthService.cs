@@ -45,10 +45,16 @@ public class AuthService : IAuthService
     {
         LoginAccountRes response = new();
 
-        Account account = await accountDb.GetAccount(email, password);
+        Account account = await accountDb.GetAccount(email);
         if (account is null)
         {
             response.Result = EErrorCode.LoginFailUserNotExist;
+            return response;
+        }
+
+        if(password != account.Password)
+        {
+            response.Result = EErrorCode.LoginFailPwNotMatch;
             return response;
         }
 
