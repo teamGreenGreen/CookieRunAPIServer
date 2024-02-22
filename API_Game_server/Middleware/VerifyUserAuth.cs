@@ -3,6 +3,7 @@ using API_Game_Server.Repository;
 using API_Game_Server.Repository.Interface;
 using Microsoft.Extensions.Primitives;
 using System;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 
 namespace API_Game_Server.Middleware;
@@ -69,7 +70,8 @@ public class VerifyUserAuth
         authInfo.Uid = uid;
         authInfo.SessionId = sessionId;
 
-        context.Items[nameof(AuthInfo)] = authInfo;
+        //context.Items[nameof(AuthInfo)] = authInfo;
+        context.Features.Set<string>(authInfo.SessionId);
 
         await next(context);
     }
