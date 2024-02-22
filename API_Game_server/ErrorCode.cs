@@ -65,4 +65,7 @@ public enum EErrorCode
     RankersNotExist = 4101,
     NoBodyInRanking = 4102,
 
+    // CookieBuy 4200 ~ 4300
+    NotEnoughDiamond = 4200,
+
 }

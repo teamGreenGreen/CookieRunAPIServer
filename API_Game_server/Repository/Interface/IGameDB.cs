@@ -28,4 +28,5 @@ public interface IGameDB : IDisposable
     public Task<UserInfo> GetUserByUid(Int64 uid);
     public Task<UserInfo> GetUserByUserName(string userName);
     public Task<int> InsertUserGetId(Int64 userId, string userName);
+    public Task UpdateCookieAndDiamond(long uid, int myDiamond, int cost, int newAcquiredCookieId);
 }
