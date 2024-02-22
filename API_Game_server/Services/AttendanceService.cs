@@ -198,13 +198,9 @@ namespace API_Game_Server.Services
             // 3. 보상 검색
             RewardItem rewardItem = await SearchReward(resInfo.AttendanceCount);
             // 4. 보상 지급
-            EErrorCode code = await GiveAndUpdateReward(resInfo, rewardItem);
-            if (code != EErrorCode.None)
-            {
-                return code;
-            }
+            EErrorCode resultCode = await GiveAndUpdateReward(resInfo, rewardItem);
             // 5. res 반환 - EErrorCode.None
-            return EErrorCode.None;
+            return resultCode;
         }
     }
 }
