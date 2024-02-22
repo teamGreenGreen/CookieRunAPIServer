@@ -46,7 +46,8 @@ namespace API_Game_Server.Services
             try
             {
                 // 레디스에서 데이터 가져오기
-                string redisFindResult = await redisDB.GetString(sessionId);
+                string sessionIdKey = string.Format("user_info:session_id:{0}", sessionId);
+                string redisFindResult = await redisDB.GetString(sessionIdKey);
 
                 // 가져온 json 문자열을 userInfo로 역직렬화
                 userInfo = JsonSerializer.Deserialize<UserInfo>(redisFindResult);
