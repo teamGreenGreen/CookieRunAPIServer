@@ -9,8 +9,8 @@ namespace API_Game_Server.Services.Interface;
 public interface IAttendanceService
 {
     public Task<AttendanceDateInfo> VerifyDatabaseData(DateTime now);
-    public Task<int> GetTimeUntilNextRenewal(DateTime now, AttendanceDateInfo serverDate, int maxDate);
-    public Task<int> GetUserAttendanceCount(AttendanceReq req, DateTime AttendanceStartDate);
+    public Task<(int, EErrorCode)> GetTimeUntilNextRenewal(DateTime now, AttendanceDateInfo serverDate, int maxDate);
+    public Task<(int, EErrorCode)> GetUserAttendanceCount(AttendanceReq req, DateTime AttendanceStartDate);
     public Task<EErrorCode> GetRenewalAndAttendance(int maxDate, AttendanceReq req, AttendanceRes res);
     public DateTime? ReadData();
     public DateTime WriteDate(DateTime date);

@@ -42,7 +42,7 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 // 미들웨어 추가
-app.UseMiddleware<API_Game_Server.Middleware.VerifyUserAuth>();
+// app.UseMiddleware<API_Game_Server.Middleware.VerifyUserAuth>();
 
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Http.HttpResults;
 using StackExchange.Redis;
+using System.Text.Json;
 using static System.Formats.Asn1.AsnWriter;
 
 namespace API_Game_Server.Repository
@@ -23,6 +24,17 @@ namespace API_Game_Server.Repository
             // Get 실패시 ""
             RedisValue result = await _db.StringGetAsync(key);
             return result.ToString();
+        }
+        public async Task SetString<T>(string key, T instance)
+        {
+            string value = JsonSerializer.Serialize<T>(instance);
+            await _db.StringSetAsync(key, value);
+        }
+        public async Task<T> GetString<T>(string key)
+        {
+            var getValue = await _db.StringGetAsync(key);
+            T value = JsonSerializer.Deserialize<T>(getValue);
+            return value;
         }
     }
 }
