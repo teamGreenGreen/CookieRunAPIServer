@@ -21,7 +21,7 @@ namespace API_Game_Server.Controllers
         public async Task<FriendRequestAcceptRes> AddRequest(FriendRequestAcceptReq req)
         {
             FriendRequestAcceptRes res = new FriendRequestAcceptRes();
-            res.Result = await friendRequestAcceptService.FriendRequestAccept(req.MyToken, req.RequestId);
+            res.Result = await friendRequestAcceptService.FriendRequestAccept(req.RequestId);
             return res;
         }
     }

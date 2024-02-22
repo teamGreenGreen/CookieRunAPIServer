@@ -6,7 +6,7 @@ namespace API_Game_Server.Model.DTO
     //  요청 데이터
     public class FriendListReq
     {
-        public string MyToken { get; set; }
+        
     }
     // 응답 데이터
     public class FriendListRes : ErrorCodeDTO
