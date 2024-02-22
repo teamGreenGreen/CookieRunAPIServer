@@ -1,3 +1,4 @@
+using API_Game_Server.Model;
 using API_Game_Server.Model.DAO;
 using SqlKata.Execution;
 
@@ -7,7 +8,7 @@ public interface IGameDB : IDisposable
 {
     public Task<AttendanceInfo> GetUserAttendance(long uid);
     public Task<AttendanceInfo> SetUserAttendance(AttendanceInfo info, bool flag = true);
-    public Task UpdateReward(UserInfo info, int count);
+    public Task UpdateReward(UserInfo info, RewardItem count);
     public Task<FriendInfo> GetFriendInfo(string friendName);
     public Task<FriendRequestInfo> GetFriendRequestInfo(string fromUserName, string toUserName);
     public Task<RequestInfo> GetRequestInfo(long requestId);

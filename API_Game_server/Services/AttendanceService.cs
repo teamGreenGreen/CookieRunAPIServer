@@ -3,6 +3,7 @@ using API_Game_Server.Model.DAO;
 using API_Game_Server.Model.DTO;
 using API_Game_Server.Repository;
 using API_Game_Server.Repository.Interface;
+using API_Game_Server.Resources;
 using API_Game_Server.Services.Interface;
 using Microsoft.VisualBasic.FileIO;
 using StackExchange.Redis;
@@ -38,70 +39,102 @@ namespace API_Game_Server.Services
                     serverDate = WriteDate(now);
                 }
                 else
+                {
                     // GameDB에는 있다. Redis에 등록한다.
                     await redisDB.SetString("attendance_date_info:start", serverDate.ToString());
+                }
             }
             else
+            {
                 // Redis cache hit!
                 serverDate = Convert.ToDateTime(redisRes);
+            }
             AttendanceDateInfo result = new AttendanceDateInfo() { AttendanceStartDate = (DateTime)serverDate };
             return result;
         }
-        public async Task<int> GetTimeUntilNextRenewal(DateTime now, AttendanceDateInfo serverDate, int maxDate)
+        public async Task<(int,EErrorCode)> GetTimeUntilNextRenewal(DateTime now, AttendanceDateInfo serverDate, int maxDate)
         {
             int remainDays;
             // 날짜 계산
             TimeSpan duration = now - serverDate.AttendanceStartDate;
             // 갱신이 필요없는 기간
             if (duration.Days < maxDate)
+            {
                 remainDays = maxDate - duration.Days;
+            }
             // 갱신이 필요한 기간
             else
             {
                 DateTime remainder = now.Subtract(new TimeSpan(duration.Days % maxDate));
-                if (! await redisDB.SetString("attendance_date_info:start", remainder.ToString())) return -1;
+                if (!await redisDB.SetString("attendance_date_info:start", remainder.ToString()))
+                {
+                    return (-1,EErrorCode.AttendanceFailSetString);
+                }
                 WriteDate(remainder);
                 remainDays = maxDate - duration.Days % maxDate;
             }
-            return remainDays;
+            return (remainDays,EErrorCode.None);
         }
-        public async Task<int> GetUserAttendanceCount(AttendanceInfoReq req, DateTime AttendanceStartDate)
+        public async Task<(int, EErrorCode)> GetUserAttendanceCount(AttendanceReq req, DateTime AttendanceStartDate)
         {
             string redisResUid = await validation.GetUid(req.Token);
-            if (long.TryParse(redisResUid, out long uid)) return -1;
+            if (long.TryParse(redisResUid, out long uid))
+            {
+                return (-1,EErrorCode.AttendanceCountError);
+            }
             AttendanceInfo attendanceInfo = await gameDB.GetUserAttendance(uid);
-            if (attendanceInfo == null) return -2;
+            if (attendanceInfo == null)
+            {
+                return (-2, EErrorCode.AttendanceFailFindUser);
+            }
             if((attendanceInfo.AttendanceDate - AttendanceStartDate).Days < 0)
             {
                 AttendanceInfo resInfo = await gameDB.SetUserAttendance(attendanceInfo, false);
-                if (resInfo == null) return -3;
+                if (resInfo == null)
+                {
+                    return (-3,EErrorCode.AttendanceUpdateFail);
+                }
             }
-            return attendanceInfo.AttendanceCount;
+            return (attendanceInfo.AttendanceCount, EErrorCode.None);
         }
-        public async Task<EErrorCode> GetRenewalAndAttendance(int maxDate, AttendanceInfoReq req, AttendanceInfoRes res)
+        public async Task<EErrorCode> GetRenewalAndAttendance(int maxDate, AttendanceReq req, AttendanceRes res)
         {
             DateTime now = DateTime.Now;
             AttendanceDateInfo serverDate = await VerifyDatabaseData(now);
-            res.RemainDays = await GetTimeUntilNextRenewal(now, serverDate, maxDate);
-            if (res.RemainDays == -1) return EErrorCode.AttendanceFailSetString;
-            res.AttendanceCount = await GetUserAttendanceCount(req, serverDate.AttendanceStartDate);
-            if (res.AttendanceCount == -1) return EErrorCode.AttendanceCountError;
-            if (res.AttendanceCount == -2) return EErrorCode.AttendanceFailFindUser;
-            if (res.AttendanceCount == -3) return EErrorCode.AttendanceUpdateFail;
+
+            var getNextTime = await GetTimeUntilNextRenewal(now, serverDate, maxDate);
+            if (getNextTime.Item2 != EErrorCode.None)
+            {
+                return getNextTime.Item2;
+            }
+            res.RemainDays = getNextTime.Item1;
+
+            var getAttendanceCount = await GetUserAttendanceCount(req, serverDate.AttendanceStartDate);
+            if (getAttendanceCount.Item2 != EErrorCode.None)
+            {
+                return getAttendanceCount.Item2;
+            }
+            res.AttendanceCount = getAttendanceCount.Item1;
             return EErrorCode.None;
         }
         public DateTime? ReadData()
         {
             string filePath = "./Resources/AttendanceDate.csv";
             // 파일이 존재하지 않으면 null 반환
-            if (!File.Exists(filePath)) return null;
+            if (!File.Exists(filePath))
+            {
+                return null;
+            }
             // 파일이 존재한다면 파일 읽기
             string row = "";
             using (TextFieldParser parser = new TextFieldParser(filePath))
                 // csv에 저장된 날짜 읽기
                 row = parser.ReadLine();
             // 데이터가 있으면 반환
-            if (row != null) return Convert.ToDateTime(row);
+            if (row != null)
+            {
+                return Convert.ToDateTime(row);
+            }
             // 비어있으면 null 반환
             return null;
         }
@@ -125,67 +158,59 @@ namespace API_Game_Server.Services
         {
             // 유저 출석 정보와 오늘 날짜 비교
             AttendanceInfo attInfo = await GetAttInfo(req);
-            if (attInfo == null) return null;  // 해당 유저 정보가 없을 때
-            if ((DateTime.Now - attInfo.AttendanceDate).Days == 0 ) return null;   // 이미 오늘 출석을 했을 때
+            if (attInfo == null)
+            {
+                return null;  // 해당 유저 정보가 없을 때
+            }
+            if ((DateTime.Now - attInfo.AttendanceDate).Days == 0)
+            {
+                return null;   // 이미 오늘 출석을 했을 때
+            }
             return attInfo;
         }
         public async Task<RewardItem> SearchReward(int count)
         {
             // 보상 검색
-            string filePath = "./Resources/RewardCalendar.csv";
-            if (!File.Exists(filePath)) return null;
-
-            List<RewardItem> rewards = new List<RewardItem>();
-            using (TextFieldParser parser = new TextFieldParser(filePath))
-            {
-                parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
-
-                string[]? rows;
-                rows = parser.ReadFields();
-                if (rows == null) return null;
-
-                for (int i = 1; i < rows.Length; i++)
-                {
-                    string[] row = rows[i].Split(":");
-                    rewards.Add(
-                        new RewardItem{
-                            Code = Int32.Parse(row[0]),
-                            Count = Int32.Parse(row[1])
-                        });
-                }
-            }
-            return rewards[count - 1];
+            RewardItem res = new RewardItem();
+            string reward = CalendarReward.Instance.rewards[count];
+            res.Name = reward.Split(":")[0];
+            res.Count = Int32.Parse(reward.Split(":")[1]);
+            return res;
         }
-        public async Task<EErrorCode> GiveReward(AttendanceInfo info, RewardItem rewardItem)
+        public async Task<EErrorCode> GiveAndUpdateReward(AttendanceInfo info, RewardItem rewardItem)
         {
-            int rewardCode = rewardItem.Code;
-            int rewardCount = rewardItem.Count;
             UserInfo user = await gameDB.GetUserByUid(info.Uid);
-            if (user == null) return EErrorCode.NotExistUserDoingReward;
-            switch (rewardCode)
+            if (user == null)
             {
-                case 1:
-                    await gameDB.UpdateReward(user, rewardCount);
-                    break;
-                default:
-                    break;
+                return EErrorCode.NotExistUserDoingReward;
             }
+
+            await gameDB.UpdateReward(user, rewardItem);
+
             return EErrorCode.None;
         }
         public async Task<EErrorCode> RequestAttendance(AttendanceReq req, AttendanceRes res)
         {
             // 1. 해당 유저가 출석을 할 수 있는 상태인지 확인
             AttendanceInfo attInfo = await HasAttended(req);
-            if (attInfo == null) return EErrorCode.AttendanceReqFail;
+            if (attInfo == null)
+            {
+                return EErrorCode.AttendanceReqFail;
+            }
             // 2. 출석을 할 수 있다면 attendance_count와 attendance_date를 업데이트
             AttendanceInfo resInfo = await gameDB.SetUserAttendance(attInfo);
-            if (resInfo == null) return EErrorCode.AttendanceUpdateFail;
+            if (resInfo == null)
+            {
+                return EErrorCode.AttendanceUpdateFail;
+            }
             // 3. 보상 검색
             RewardItem rewardItem = await SearchReward(resInfo.AttendanceCount);
             // 4. 보상 지급
-            EErrorCode code = await GiveReward(resInfo, rewardItem);
-            if (code != EErrorCode.None) return code;
+            EErrorCode code = await GiveAndUpdateReward(resInfo, rewardItem);
+            if (code != EErrorCode.None)
+            {
+                return code;
+            }
             // 5. res 반환 - EErrorCode.None
             return EErrorCode.None;
         }
