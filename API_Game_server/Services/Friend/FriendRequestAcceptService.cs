@@ -4,6 +4,7 @@ using API_Game_Server.Model.DAO;
 using System;
 using API_Game_Server.Services.Interface;
 using API_Game_Server.Repository.Interface;
+using System.Text.Json;
 
 namespace API_Game_Server.Services
 {
@@ -18,16 +19,8 @@ namespace API_Game_Server.Services
             redisDB = _redisDB;
             validationService = _validationService;
         }
-        public async Task<EErrorCode> FriendRequestAccept(string token, long requestId)
+        public async Task<EErrorCode> FriendRequestAccept(long requestId)
         {
-            // 토큰 유효성 검사
-            string myUid = await validationService.GetUid(token);
-            // 유효하지 않은 토큰이면
-            if(myUid == "")
-            {
-                return EErrorCode.InvalidToken;
-            }
-
             // request_id를 이용해서 from_user_name과 to_user_name 가져오기
             RequestInfo requestInfo = await gameDB.GetRequestInfo(requestId);
 

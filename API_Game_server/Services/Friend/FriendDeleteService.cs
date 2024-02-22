@@ -4,6 +4,7 @@ using API_Game_Server.Model.DAO;
 using System;
 using API_Game_Server.Services.Interface;
 using API_Game_Server.Repository.Interface;
+using System.Text.Json;
 
 namespace API_Game_Server.Services
 {
@@ -18,21 +19,15 @@ namespace API_Game_Server.Services
             redisDB = _redisDB;
             validationService = _validationService;
         }
-        public async Task<EErrorCode> FriendDelete(string token, string friendName)
+        public async Task<EErrorCode> FriendDelete(string sessionId, string friendName)
         {
-            // 토큰 유효성 검사
-            string myUid = await validationService.GetUid(token);
-            // 유효하지 않은 토큰이면
-            if(myUid == "")
-            {
-                return EErrorCode.InvalidToken;
-            }
-
-            // 가져온 uid 이용해서 클라이언트의 user_name 조회
-            string uidKey = string.Format("user_info:uid:{0}", myUid);
-            string[] arrUidValues = {"UserName"};
-            string[] arrMyName = await redisDB.GetHash(uidKey, arrUidValues); // 받아올 칼럼명을 프로퍼티명으로 전달
-            string myName = arrMyName[0];
+            // 가져온 sessionId 이용해서 클라이언트의 user_name 조회
+            string sessionIdKey = string.Format("user_info:session_id:{0}",sessionId);
+            string userInfo = await redisDB.GetString(sessionIdKey);
+            // 가져온 string 역직렬화
+            UserInfo myInfo = JsonSerializer.Deserialize<UserInfo>(userInfo);
+            // 역직렬화한 string에서 user_name 프로퍼티만 가져오기
+            string myName = myInfo.UserName;
 
             await gameDB.DeleteFriend(myName, friendName); // mySql 삭제
             await gameDB.DeleteFriend(friendName, myName); // mySql 삭제

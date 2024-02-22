@@ -52,7 +52,7 @@ public class AuthService : IAuthService
             return response;
         }
 
-        if(password != account.Password)
+        if(Security.GenerateHashingPassword(account.SaltValue, password) != account.Password)
         {
             response.Result = EErrorCode.LoginFailPwNotMatch;
             return response;

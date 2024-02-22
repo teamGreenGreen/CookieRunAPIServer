@@ -3,6 +3,7 @@ using API_Game_Server.Repository;
 using API_Game_Server.Repository.Interface;
 using Microsoft.Extensions.Primitives;
 using System;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 
 namespace API_Game_Server.Middleware;
@@ -59,17 +60,18 @@ public class VerifyUserAuth
         }
 
         // sessionId가 일치하는지 검사
-        //if(!IsValidSessionId(context, sessionId, redisSessionId))
-        //{
-        //    await ErrorResponse(context, StatusCodes.Status401Unauthorized, EErrorCode.AuthFailWrongSessionId);
-        //    return;
-        //}
+        if(!IsValidSessionId(context, sessionId, redisSessionId))
+        {
+            await ErrorResponse(context, StatusCodes.Status401Unauthorized, EErrorCode.AuthFailWrongSessionId);
+            return;
+        }
 
         AuthInfo authInfo = new();
         authInfo.Uid = uid;
         authInfo.SessionId = sessionId;
 
-        context.Items[nameof(AuthInfo)] = authInfo;
+        //context.Items[nameof(AuthInfo)] = authInfo;
+        context.Features.Set<string>(authInfo.SessionId);
 
         await next(context);
     }
