@@ -28,7 +28,7 @@ namespace API_Game_Server.Repository
         public async Task SetString<T>(string key, T instance)
         {
             string value = JsonSerializer.Serialize<T>(instance);
-            await _db.StringSetAsync(key, value);
+            await _db.StringSetAsync(key, value,new TimeSpan(7,0,0,0));
         }
         public async Task<T> GetString<T>(string key)
         {

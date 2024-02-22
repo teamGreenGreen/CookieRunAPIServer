@@ -23,8 +23,10 @@ namespace API_Game_Server.Controllers
         }
         // 토큰을 인자로 넘기면, 등수를 알 수 있다.
         [HttpPost("user")]
-        public async Task<RankGetRes> GetRank(RankGetReq req)
+        public async Task<RankGetRes> GetRank()
         {
+            RankGetReq req = new RankGetReq();
+            req.SessionId = HttpContext.Features.Get<string>();
             RankGetRes res = new RankGetRes();
             res.Result = await service.GetRank(req, res);
             return res;
@@ -46,24 +48,6 @@ namespace API_Game_Server.Controllers
             RankSizeRes res = new RankSizeRes();
             res.Result = await service.GetSizeOfRanks(res);
             return res;
-        }
-
-        [HttpPost("test")]
-        public async Task SetJsonTest()
-        {
-            UserInfo userInfo = new UserInfo();
-            userInfo.Level = 1;
-            userInfo.UserName = "test";
-            userInfo.Exp = 12;
-            userInfo.UserId = 1;
-            userInfo.Money = 1;
-            await redis.SetString<UserInfo>("user_info:session_id:123",userInfo);
-        }
-
-        [HttpPost("test2")]
-        public async Task<UserInfo> GetJsonTest()
-        {
-            return await redis.GetString<UserInfo>("user_info:session_id:123");
         }
     }
 }
