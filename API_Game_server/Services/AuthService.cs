@@ -62,13 +62,11 @@ public class AuthService : IAuthService
         // 1. gameDB에서 user_info 조회
         UserInfo userInfo = await gameDb.GetUserByUid(uid);
         if (userInfo == null) return (EErrorCode.LoginFailAddRedis, null);
-        // 2. redis에 저장하기 위한 인스턴스 생성
-        RedisUserInfo redis_info = GenerateSessionInfo(sessionId, userInfo);
-
-        // 3. redis에 유저 정보(세션) 업데이트
+       
+        // 2. redis에 유저 정보(세션) 업데이트
         try
         {
-            await redisDb.SetHash($"user_info:uid:{uid}", redis_info);
+            await redisDb.SetString<UserInfo>($"user_info:session_id:{sessionId}", userInfo);
         }
         catch
         {
@@ -76,19 +74,5 @@ public class AuthService : IAuthService
         }
 
         return (EErrorCode.None, sessionId);
-    }
-
-    public RedisUserInfo GenerateSessionInfo(string sessionId, UserInfo userInfo)
-    {
-        return new RedisUserInfo
-        {
-            SessionId = sessionId,
-            UserName = userInfo.UserName,
-            Level = userInfo.Level,
-            Exp = userInfo.Exp,
-            Money = userInfo.Money,
-            Diamond = userInfo.Diamond,
-            MaxScore = userInfo.MaxScore,
-        };
     }
 }
