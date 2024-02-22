@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
 using API_Game_Server.Services;
 using API_Game_Server.Services.Interface;
+using API_Game_Server.Repository.Interface;
 
 namespace API_Game_Server.Controllers
 {
@@ -14,9 +15,11 @@ namespace API_Game_Server.Controllers
     public class RankController : ControllerBase
     {
         private readonly IRankService service;
-        public RankController(IRankService rankService)
+        private readonly IRedisDB redis;
+        public RankController(IRankService rankService, IRedisDB reids)
         {
             this.service = rankService;
+            this.redis = reids;
         }
         // 토큰을 인자로 넘기면, 등수를 알 수 있다.
         [HttpPost("user")]
@@ -43,6 +46,24 @@ namespace API_Game_Server.Controllers
             RankSizeRes res = new RankSizeRes();
             res.Result = await service.GetSizeOfRanks(res);
             return res;
+        }
+
+        [HttpPost("test")]
+        public async Task SetJsonTest()
+        {
+            UserInfo userInfo = new UserInfo();
+            userInfo.Level = 1;
+            userInfo.UserName = "test";
+            userInfo.Exp = 12;
+            userInfo.UserId = 1;
+            userInfo.Money = 1;
+            await redis.SetString<UserInfo>("user_info:session_id:123",userInfo);
+        }
+
+        [HttpPost("test2")]
+        public async Task<UserInfo> GetJsonTest()
+        {
+            return await redis.GetString<UserInfo>("user_info:session_id:123");
         }
     }
 }

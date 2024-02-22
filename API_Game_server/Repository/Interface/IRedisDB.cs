@@ -20,5 +20,8 @@ public interface IRedisDB
     public Task<long> SizeOfSet(string key);
     public Task<bool> DeleteMember(string key, string member);
     public Task<bool> SetString(string key, string value);
+    public Task SetString<T>(string key, T value);
+
     public Task<string> GetString(string key);
+    public Task<T> GetString<T>(string key);
 }
