@@ -353,7 +353,6 @@ namespace API_Game_Server.Services
                     if (int.TryParse(rows[i][4], out int expBonus)) cookie.ExpBonus = expBonus;
                     if (int.TryParse(rows[i][5], out int MoneyBonus)) cookie.MoneyBonus = MoneyBonus;
                     if (uint.TryParse(rows[i][6], out uint diamondCost)) cookie.DiamondCost = diamondCost;
-                    if (uint.TryParse(rows[i][7], out uint moneyCost)) cookie.MoneyCost = moneyCost;
 
                     cookieData.Add(id, cookie);
                 }
