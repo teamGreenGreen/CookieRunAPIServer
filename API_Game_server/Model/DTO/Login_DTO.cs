@@ -9,8 +9,6 @@ public class LoginReq
     public Int64 UserId {  get; set; }
     [Required]
     public string AuthToken { get; set; }
-    [Required]
-    public string UserName { get; set; }
 }
 
 public class LoginRes : ErrorCodeDTO
@@ -20,5 +18,4 @@ public class LoginRes : ErrorCodeDTO
     [Required]
     public Int64 Uid { get; set;}
     public UserInfo UserInfo { get; set; }
-
 }
