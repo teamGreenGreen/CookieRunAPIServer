@@ -68,7 +68,7 @@ namespace API_Game_Server.Services
             int bitToSet = 1 << (cookieId - 1);
             myAcquiredCookieId |= bitToSet;
 
-            //await gameDB.UpdateDiamond(myUid, myDiamond, cookieCost, myAcquiredCookieId); // DB에 정보 업데이트
+            await gameDB.UpdateDiamond(myUid, myDiamond, cookieCost, myAcquiredCookieId); // DB에 정보 업데이트
 
             string myRedisKey = string.Format("user_info:session_id:{0}",sessionId);
             myInfo.Diamond = myDiamond - cookieCost;
