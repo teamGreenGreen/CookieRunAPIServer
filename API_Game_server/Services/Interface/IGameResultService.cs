@@ -7,8 +7,8 @@ namespace API_Game_Server.Services.Interface;
 
 public interface IGameResultService
 {
-    public Task<EErrorCode> ValidateRequestAsync(GameResultReq req);
-    public Task<EErrorCode> GiveRewardsAsync(GameResultReq req, GameResultRes res);
+    public Task<EErrorCode> ValidateRequestAsync(string sessionId, GameResultReq req);
+    public Task<EErrorCode> GiveRewardsAsync(string sessionId, GameResultReq req, GameResultRes res);
     public int CalcMaxScore();
     public int CalcMoney();
     public int CalcExp();

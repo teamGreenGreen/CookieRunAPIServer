@@ -35,8 +35,9 @@ public enum EErrorCode
     GameResultService_MoneyOrExpChangedDetected     = 3001,
     GameResultService_RewardCalcFail                = 3002,
     GameResultService_AddLevelUpRewardFail          = 3003,
-    GameResultService_UserInfoUpdateError           = 3004,
-    GameResultService_RedisUpdateError              = 3005,
+    GameResultService_DBUserInfoUpdateFail          = 3004,
+    GameResultService_GetRedisUserInfoFail          = 3005,
+    GameResultService_RedisUpdateError              = 3006,
 
     // GameDB_Mail 3100~3199
     MailService_OpenFail                            = 3100,
@@ -44,6 +45,7 @@ public enum EErrorCode
     MailService_GetInfoFail                         = 3102,
     MailService_RewardFail                          = 3103,
     MailService_CreateMailBoxFail                   = 3104,
+    MailService_GetRedisUserInfoFail                = 3105,
 
     // GameDB_GameResult 3200~3299
     //GameDB_GetUserInfoFail = 3201,

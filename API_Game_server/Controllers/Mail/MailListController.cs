@@ -21,13 +21,15 @@ namespace API_Game_Server.Controllers
         }
 
         [HttpPost]
-        public async Task<MailListRes> PostAsync(MailListReq req)
+        public async Task<MailListRes> PostAsync()
         {
+            string sessionId = HttpContext.Features.Get<string>();
+
             //응답 객체 생성
             MailListRes res = new();
 
             // 메일 리스트 불러오기
-            res.Result = await mailService.GetMailListAsync(req, res);
+            res.Result = await mailService.GetMailListAsync(sessionId, res);
             return res;
         }
     }

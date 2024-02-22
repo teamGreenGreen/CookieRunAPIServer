@@ -22,16 +22,18 @@ namespace API_Game_Server.Controllers
         [HttpPost]
         public async Task<GameResultRes> PostAsync(GameResultReq req)
         {
+            string sessionId = HttpContext.Features.Get<string>();
+
             //응답 객체 생성
             GameResultRes res = new();
 
             // 요청 검증
-            res.Result = await gameResultService.ValidateRequestAsync(req);
+            res.Result = await gameResultService.ValidateRequestAsync(sessionId, req);
             if (res.Result != EErrorCode.None)
                 return res;
 
             // 게임 보상 지급
-            res.Result = await gameResultService.GiveRewardsAsync(req, res);
+            res.Result = await gameResultService.GiveRewardsAsync(sessionId, req, res);
             return res;
         }
     }
