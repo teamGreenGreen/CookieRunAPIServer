@@ -15,10 +15,10 @@ namespace API_Game_Server.Services
             this.redisDB = redisDB;
             this.validationService = validationService;
         }
-        public async Task<EErrorCode> GetRank(RankGetReq req, RankGetRes res)
+        public async Task<EErrorCode> GetRank(string sessionId, RankGetRes res)
         {
-            string redisUid = await validationService.GetUid(req.SessionId);
-            var result = await redisDB.GetZsetRank("rank", redisUid);
+            long userUid = await validationService.GetUid(sessionId);
+            var result = await redisDB.GetZsetRank("rank", userUid.ToString());
             if (result == null)
             {
                 // 유저가 랭킹에 존재하지 않는다. -> 아직 게임을 진행하지 않은 유저

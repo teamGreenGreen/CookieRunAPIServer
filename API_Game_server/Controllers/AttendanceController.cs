@@ -23,19 +23,18 @@ namespace API_Game_Server.Controllers
         [HttpPost("request")]
         public async Task<AttendanceRes> RequestAttendance()
         {
-            AttendanceReq req = new AttendanceReq();
-            req.SessionId = HttpContext.Features.Get<string>();
+            string sessionId = HttpContext.Features.Get<string>();
 
             AttendanceRes res = new AttendanceRes();
             res.Rewards = CalendarReward.Instance.rewards;
             // 갱신까지 남은 날과 현재까지 출석한 수 검색
-            res.Result = await service.GetRenewalAndAttendance(maxDate, req, res);
+            res.Result = await service.GetRenewalAndAttendance(maxDate, sessionId, res);
             if (res.Result != EErrorCode.None)
             {
                 return res;
             }
             // 출석 진행
-            res.Result = await service.RequestAttendance(req, res);
+            res.Result = await service.RequestAttendance(sessionId, res);
             return res;
         }
     }
