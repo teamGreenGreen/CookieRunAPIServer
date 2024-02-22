@@ -33,6 +33,15 @@ public class CreateUserController : ControllerBase
             await gameService.CreateUserMailBox(response.Uid);
         }
 
+        // 유저가 존재하면 유저 정보를 redis에 추가
+        // 세션ID 발급, redis에 추가
+        (errorCode, response.SessionId) = await authService.GenerateSessionId(response.Uid);
+        if (errorCode == EErrorCode.LoginFailAddRedis)
+        {
+            response.Result = errorCode;
+            return response;
+        }
+
         // 유저 데이터 로드
         (errorCode, response.UserInfo) = await userService.GetUserInfo(request.UserId);
         if (errorCode == EErrorCode.LoginFailUserNotExist)
