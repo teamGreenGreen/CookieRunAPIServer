@@ -75,9 +75,9 @@ namespace API_Game_Server.Services
             }
             return (remainDays,EErrorCode.None);
         }
-        public async Task<(int, EErrorCode)> GetUserAttendanceCount(AttendanceReq req, DateTime AttendanceStartDate)
+        public async Task<(int, EErrorCode)> GetUserAttendanceCount(string sessionId, DateTime AttendanceStartDate)
         {
-            long userUid = await validation.GetUid(req.SessionId);
+            long userUid = await validation.GetUid(sessionId);
             AttendanceInfo attendanceInfo = await gameDB.GetUserAttendance(userUid);
             if (attendanceInfo == null)
             {
@@ -93,7 +93,7 @@ namespace API_Game_Server.Services
             }
             return (attendanceInfo.AttendanceCount, EErrorCode.None);
         }
-        public async Task<EErrorCode> GetRenewalAndAttendance(int maxDate, AttendanceReq req, AttendanceRes res)
+        public async Task<EErrorCode> GetRenewalAndAttendance(int maxDate, string sessionId, AttendanceRes res)
         {
             DateTime now = DateTime.Now;
             AttendanceDateInfo serverDate = await VerifyDatabaseData(now);
@@ -105,7 +105,7 @@ namespace API_Game_Server.Services
             }
             res.RemainDays = getNextTime.Item1;
 
-            var getAttendanceCount = await GetUserAttendanceCount(req, serverDate.AttendanceStartDate);
+            var getAttendanceCount = await GetUserAttendanceCount(sessionId, serverDate.AttendanceStartDate);
             if (getAttendanceCount.Item2 != EErrorCode.None)
             {
                 return getAttendanceCount.Item2;
@@ -140,20 +140,16 @@ namespace API_Game_Server.Services
             File.WriteAllText(filePath, date.ToString());
             return date;
         }
-        public async Task<AttendanceInfo> GetAttInfo(AttendanceReq req)
+        public async Task<AttendanceInfo> GetAttInfo(string sessionId)
         {
             // 유저 출석 정보 가져오기
-            string redisUid = await validation.GetUid(req.SessionId);
-            if (!long.TryParse(redisUid, out long uid))
-            {
-                return null;
-            }
-            return await gameDB.GetUserAttendance(uid);
+            long userUid = await validation.GetUid(sessionId);
+            return await gameDB.GetUserAttendance(userUid);
         }
-        public async Task<AttendanceInfo> HasAttended(AttendanceReq req)
+        public async Task<AttendanceInfo> HasAttended(string sessionId)
         {
             // 유저 출석 정보와 오늘 날짜 비교
-            AttendanceInfo attInfo = await GetAttInfo(req);
+            AttendanceInfo attInfo = await GetAttInfo(sessionId);
             if (attInfo == null)
             {
                 return null;  // 해당 유저 정보가 없을 때
@@ -185,10 +181,10 @@ namespace API_Game_Server.Services
 
             return EErrorCode.None;
         }
-        public async Task<EErrorCode> RequestAttendance(AttendanceReq req, AttendanceRes res)
+        public async Task<EErrorCode> RequestAttendance(string sessionId, AttendanceRes res)
         {
             // 1. 해당 유저가 출석을 할 수 있는 상태인지 확인
-            AttendanceInfo attInfo = await HasAttended(req);
+            AttendanceInfo attInfo = await HasAttended(sessionId);
             if (attInfo == null)
             {
                 return EErrorCode.AttendanceReqFail;

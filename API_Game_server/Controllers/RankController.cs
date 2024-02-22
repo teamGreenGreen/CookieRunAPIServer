@@ -15,20 +15,17 @@ namespace API_Game_Server.Controllers
     public class RankController : ControllerBase
     {
         private readonly IRankService service;
-        private readonly IRedisDB redis;
-        public RankController(IRankService rankService, IRedisDB reids)
+        public RankController(IRankService rankService)
         {
             this.service = rankService;
-            this.redis = reids;
         }
         // 토큰을 인자로 넘기면, 등수를 알 수 있다.
         [HttpPost("user")]
         public async Task<RankGetRes> GetRank()
         {
-            RankGetReq req = new RankGetReq();
-            req.SessionId = HttpContext.Features.Get<string>();
+            string sessionId = HttpContext.Features.Get<string>();
             RankGetRes res = new RankGetRes();
-            res.Result = await service.GetRank(req, res);
+            res.Result = await service.GetRank(sessionId, res);
             return res;
         }
         // 조회하고자 하는 page를 인자로 넘기면
