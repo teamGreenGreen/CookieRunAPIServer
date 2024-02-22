@@ -1,10 +1,12 @@
 using API_Game_Server.Model.DAO;
 using API_Game_Server.Model.DTO;
 using API_Game_Server.Repository;
+using API_Game_Server.Resources;
 using API_Game_Server.Services;
 using API_Game_Server.Services.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace API_Game_Server.Controllers
 {
@@ -18,18 +20,18 @@ namespace API_Game_Server.Controllers
         {
             service = _service;
         }
-        // 유저가 출석부를 요청 -> 갱신까지 남은 날과 현재까지 출석한 수를 반환
-        [HttpPost("get")]
-        public async Task<AttendanceInfoRes> GetAttendanceInfo(AttendanceInfoReq req)
-        {
-            AttendanceInfoRes res = new AttendanceInfoRes();
-            res.Result = await service.GetRenewalAndAttendance(maxDate, req, res);
-            return res;
-        }
         [HttpPost("request")]
         public async Task<AttendanceRes> RequestAttendance(AttendanceReq req)
         {
             AttendanceRes res = new AttendanceRes();
+            res.Rewards = CalendarReward.Instance.rewards;
+            // 갱신까지 남은 날과 현재까지 출석한 수 검색
+            res.Result = await service.GetRenewalAndAttendance(maxDate, req, res);
+            if (res.Result != EErrorCode.None)
+            {
+                return res;
+            }
+            // 출석 진행
             res.Result = await service.RequestAttendance(req, res);
             return res;
         }

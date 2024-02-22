@@ -6,6 +6,7 @@ using SqlKata;
 using SqlKata.Execution;
 using System.Data;
 using API_Game_Server.Repository.Interface;
+using API_Game_Server.Model;
 
 namespace API_Game_Server.Repository;
 
@@ -42,12 +43,22 @@ public partial class GameDB : IGameDB
         if (res == null) return null;
         return updateInfo;
     }
-    public async Task UpdateReward(UserInfo info, int count)
+    public async Task UpdateReward(UserInfo info, RewardItem reward)
     {
         // SQLKata 쿼리 생성
-        await queryFactory.Query("USER_INFO").Where("uid", info.Uid).UpdateAsync(new
+        if (reward.Name == "money")
         {
-            money = info.Money + count
-        });
+            await queryFactory.Query("USER_INFO").Where("uid", info.Uid).UpdateAsync(new
+            {
+                money = info.Money + reward.Count
+            });
+        }
+        else if (reward.Name == "diamond")
+        {
+            await queryFactory.Query("USER_INFO").Where("uid", info.Uid).UpdateAsync(new
+            {
+                diamond = info.Diamond + reward.Count
+            });
+        }
     }
 }
