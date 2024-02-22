@@ -6,7 +6,6 @@ namespace API_Game_Server.Model.DTO
     public class GameResultReq
     {
         // 젤리, 돈, 플레이 시간
-        public string Token { get; set; }
         public Dictionary<int/*itemID*/, int/*count*/>? Items { get; set; }
         public int Score { get; set; }
         public int Money { get; set; }
@@ -20,5 +19,6 @@ namespace API_Game_Server.Model.DTO
         public int Money { get; set; }
         public int Level {  get; set; } 
         public int Exp { get; set; }
+        public int MaxExp { get; set; }
     }
 }

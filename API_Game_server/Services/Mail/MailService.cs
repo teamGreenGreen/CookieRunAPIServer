@@ -24,20 +24,20 @@ namespace API_Game_Server.Services
             this.validationService = validationService;
         }
 
-        public async Task<EErrorCode> GetMailListAsync(MailListReq req, MailListRes res)
+        public async Task<EErrorCode> GetMailListAsync(string sessionId, MailListRes res)
         {
-            // UID 얻기
+            // sessionId를 통해 Uid 얻기
             long uid = -1;
+            
             try
             {
-                string stringUid = await validationService.GetUid(req.Token);
-                uid = long.Parse(stringUid);
+                uid = await validationService.GetUid(sessionId);
             }
             catch
             {
-                return EErrorCode.InvalidToken;
+                return EErrorCode.MailService_GetRedisUserInfoFail;
             }
-            
+
             try
             {
                 res.MailList = await gameDB.GetMailListAsync(uid);
@@ -55,18 +55,18 @@ namespace API_Game_Server.Services
             return gameDB.AddMailAsync(id, sender, content, count, isRead, rewardType, expiredAt);
         }
 
-        public async Task<EErrorCode> OpenMailAsync(MailOpenReq req)
+        public async Task<EErrorCode> OpenMailAsync(string sessionId, MailOpenReq req)
         {
-            // UID 얻기
+            // sessionId를 통해 Uid 얻기
             long uid = -1;
+
             try
             {
-                string stringUid = await validationService.GetUid(req.Token);
-                uid = long.Parse(stringUid);
+                uid = await validationService.GetUid(sessionId);
             }
             catch
             {
-                return EErrorCode.InvalidToken;
+                return EErrorCode.MailService_GetRedisUserInfoFail;
             }
 
             // 보상하기

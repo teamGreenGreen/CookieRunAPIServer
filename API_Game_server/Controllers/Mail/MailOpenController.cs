@@ -22,9 +22,11 @@ namespace API_Game_Server.Controllers
         [HttpPost]
         public async Task<MailOpenRes> PostAsync(MailOpenReq req)
         {
+            string sessionId = HttpContext.Features.Get<string>();
+
             //응답 객체 생성
             MailOpenRes res = new();
-            res.Result = await mailService.OpenMailAsync(req);
+            res.Result = await mailService.OpenMailAsync(sessionId, req);
             return res;
         }
     }
