@@ -77,12 +77,8 @@ namespace API_Game_Server.Services
         }
         public async Task<(int, EErrorCode)> GetUserAttendanceCount(AttendanceReq req, DateTime AttendanceStartDate)
         {
-            string redisResUid = await validation.GetUid(req.Token);
-            if (long.TryParse(redisResUid, out long uid))
-            {
-                return (-1,EErrorCode.AttendanceCountError);
-            }
-            AttendanceInfo attendanceInfo = await gameDB.GetUserAttendance(uid);
+            long userUid = await validation.GetUid(req.SessionId);
+            AttendanceInfo attendanceInfo = await gameDB.GetUserAttendance(userUid);
             if (attendanceInfo == null)
             {
                 return (-2, EErrorCode.AttendanceFailFindUser);
@@ -147,7 +143,7 @@ namespace API_Game_Server.Services
         public async Task<AttendanceInfo> GetAttInfo(AttendanceReq req)
         {
             // 유저 출석 정보 가져오기
-            string redisUid = await validation.GetUid(req.Token);
+            string redisUid = await validation.GetUid(req.SessionId);
             if (!long.TryParse(redisUid, out long uid))
             {
                 return null;

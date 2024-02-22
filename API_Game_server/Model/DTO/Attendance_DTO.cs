@@ -2,7 +2,7 @@ namespace API_Game_Server.Model.DTO
 {
     public class AttendanceReq
     {
-        public string Token { get; set; }
+        public string SessionId { get; set; }
     }
     public class AttendanceRes : ErrorCodeDTO
     {
