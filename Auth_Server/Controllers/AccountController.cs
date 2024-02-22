@@ -24,7 +24,7 @@ public class AccountController : ControllerBase
     public async Task<CreateAccountRes> Create(CreateAccountReq request)
     {
         CreateAccountRes response = new();
-
+        
         response.Result = await authService.CreateAccountAsync(request.Email, request.Password);
 
         return response;
