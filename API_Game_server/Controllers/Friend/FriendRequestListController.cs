@@ -18,7 +18,7 @@ namespace API_Game_Server.Controllers
             friendRequestListService = _friendRequestListService;
         }
         [HttpPost]
-        public async Task<FriendRequestListRes> GetFriendReqeustList(FriendRequestListReq req)
+        public async Task<FriendRequestListRes> GetFriendReqeustList()
         {
             string sessionId = HttpContext.Features.Get<string>();
             FriendRequestListRes res = new FriendRequestListRes();
