@@ -1,3 +1,4 @@
+using API_Game_Server.Model.DAO;
 using API_Game_Server.Model.DTO;
 using API_Game_Server.Services;
 using API_Game_Server.Services.Interface;
@@ -65,6 +66,8 @@ public class LoginController : ControllerBase
             response.Result = errorCode;
             return response;
         }
+
+        string sessionId = HttpContext.Features.Get<string>();
 
         return response;
     }
