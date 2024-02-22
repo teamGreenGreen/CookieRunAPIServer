@@ -59,11 +59,11 @@ public class VerifyUserAuth
         }
 
         // sessionId가 일치하는지 검사
-        if(!IsValidSessionId(context, sessionId, redisSessionId))
-        {
-            await ErrorResponse(context, StatusCodes.Status401Unauthorized, EErrorCode.AuthFailWrongSessionId);
-            return;
-        }
+        //if(!IsValidSessionId(context, sessionId, redisSessionId))
+        //{
+        //    await ErrorResponse(context, StatusCodes.Status401Unauthorized, EErrorCode.AuthFailWrongSessionId);
+        //    return;
+        //}
 
         AuthInfo authInfo = new();
         authInfo.Uid = uid;

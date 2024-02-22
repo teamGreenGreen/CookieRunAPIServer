@@ -4,5 +4,5 @@ namespace API_Game_Server.Services.Interface;
 
 public interface IValidationService
 {
-    public Task<string> GetUid(string Token);
+    public Task<long> GetUid(string Token);
 }

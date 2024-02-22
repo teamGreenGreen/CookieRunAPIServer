@@ -17,7 +17,7 @@ namespace API_Game_Server.Model.DTO
     }
     public class RankGetReq
     {
-        public string? Token { get; set; }
+        public string? SessionId { get; set; }
     }
     public class  RankGetRes : ErrorCodeDTO
     {

@@ -21,8 +21,11 @@ namespace API_Game_Server.Controllers
             service = _service;
         }
         [HttpPost("request")]
-        public async Task<AttendanceRes> RequestAttendance(AttendanceReq req)
+        public async Task<AttendanceRes> RequestAttendance()
         {
+            AttendanceReq req = new AttendanceReq();
+            req.SessionId = HttpContext.Features.Get<string>();
+
             AttendanceRes res = new AttendanceRes();
             res.Rewards = CalendarReward.Instance.rewards;
             // 갱신까지 남은 날과 현재까지 출석한 수 검색

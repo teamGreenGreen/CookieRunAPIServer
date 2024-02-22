@@ -17,7 +17,7 @@ namespace API_Game_Server.Services
         }
         public async Task<EErrorCode> GetRank(RankGetReq req, RankGetRes res)
         {
-            string redisUid = await validationService.GetUid(req.Token);
+            string redisUid = await validationService.GetUid(req.SessionId);
             var result = await redisDB.GetZsetRank("rank", redisUid);
             if (result == null)
             {
