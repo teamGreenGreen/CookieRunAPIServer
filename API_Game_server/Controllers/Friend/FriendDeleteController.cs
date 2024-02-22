@@ -20,8 +20,9 @@ namespace API_Game_Server.Controllers
         [HttpPost]
         public async Task<FriendDeleteRes> FriendDelete(FriendDeleteReq req)
         {
+            string sessionId = HttpContext.Features.Get<string>();
             FriendDeleteRes res = new FriendDeleteRes();
-            res.Result = await friendDeleteService.FriendDelete(req.MyToken, req.FriendName);
+            res.Result = await friendDeleteService.FriendDelete(sessionId, req.FriendName);
             return res;
         }
     }

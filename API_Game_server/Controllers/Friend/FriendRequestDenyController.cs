@@ -21,7 +21,7 @@ namespace API_Game_Server.Controllers
         public async Task<FriendRequestDenyRes> DenyRequest(FriendRequestDenyReq req)
         {
             FriendRequestDenyRes res = new FriendRequestDenyRes();
-            res.Result = await friendRequestDenyService.FriendRequestDeny(req.MyToken, req.RequestId);
+            res.Result = await friendRequestDenyService.FriendRequestDeny(req.RequestId);
             return res;
         }
     }
