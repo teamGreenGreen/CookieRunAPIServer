@@ -22,8 +22,9 @@ public class VerifyUserAuth
     public async Task Invoke(HttpContext context)
     {
         string formString = context.Request.Path.Value;
-        // 로그인 요청은 토큰 검사를 하지 않음
-        if (string.Compare(formString, "/Login", StringComparison.OrdinalIgnoreCase) == 0)
+        // 로그인, 유저 생성 요청은 세션ID 검사를 하지 않음
+        if (string.Compare(formString, "/Login", StringComparison.OrdinalIgnoreCase) == 0 ||
+            string.Compare(formString, "/CreateUser", StringComparison.OrdinalIgnoreCase) == 0)
         {
             // 다음 미들웨어를 호출
             await next(context);
