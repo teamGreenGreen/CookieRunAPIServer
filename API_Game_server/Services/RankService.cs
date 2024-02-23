@@ -29,12 +29,17 @@ namespace API_Game_Server.Services
         }
         public async Task<EErrorCode> LoadRanks(RanksLoadReq req, RanksLoadRes res)
         {
-            RedisValue[] result = await redisDB.GetZsetRanks("rank", req.Page);
+            SortedSetEntry[] result = await redisDB.GetZsetRanks("rank", req.Page, req.PlayerNum);
             if (result.Length == 0)
             {
                 return EErrorCode.RankersNotExist;
             }
-            res.Ranks = Array.ConvertAll(result, x => (string)x);
+            string[] ranks = new string[result.Length];
+            for (int i = 0; i < result.Length; i++)
+            {
+                ranks[i] = $"{result[i].Element}:{result[i].Score}";
+            }
+            res.Ranks = ranks;
             return EErrorCode.None;
         }
         public async Task<EErrorCode> GetSizeOfRanks(RankSizeRes res)
