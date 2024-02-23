@@ -18,7 +18,7 @@ namespace API_Game_Server.Model.DTO
     }
     public class  RankGetRes : ErrorCodeDTO
     {
-        public long Rank { get; set; }
+        public string Rank { get; set; }
     }
     public class RankSizeRes : ErrorCodeDTO
     {
