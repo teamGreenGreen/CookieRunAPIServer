@@ -7,4 +7,5 @@ namespace API_Game_Server.Services.Interface;
 public interface INowCookieService
 {
     public Task<(EErrorCode, int)> NowCookieId(string sessionId);
+    public Task<EErrorCode> EditNowCookieId(string sessionId, int cookieId);
 }

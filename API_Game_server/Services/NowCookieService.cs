@@ -45,5 +45,22 @@ namespace API_Game_Server.Services
                 return (EErrorCode.None, int.Parse(myNowCookieId));
             }
         }
+        public async Task<EErrorCode> EditNowCookieId(string sessionId, int cookieId)
+        {
+            // 가져온 sessionId 이용해서 클라이언트의 user_name 조회
+            string sessionIdKey = string.Format("user_info:session_id:{0}", sessionId);
+            string userInfo = await redisDB.GetString(sessionIdKey);
+            // 가져온 string 역직렬화
+            UserInfo myInfo = JsonSerializer.Deserialize<UserInfo>(userInfo);
+            // 역직렬화한 string에서 diamond 프로퍼티만 가져오기
+            int myDiamond = myInfo.Diamond;
+            // 유저의 uid 가져오기
+            long myUid = myInfo.Uid;
+
+            string redisKey = string.Format("now_cookie_id:uid:{0}", myUid);
+
+            await redisDB.SetString(redisKey, cookieId);
+            return EErrorCode.None;
+        }
     }
 }
