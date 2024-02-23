@@ -52,20 +52,13 @@ public class VerifyUserAuth
             return;
         }
         
-        // // redis에서 uid에 해당하는 sessionId를 불러옴
-        // string redisSessionId = await redisDb.GetSessionIdAsync(uid);
-        // if(redisSessionId == null)
-        // {
-        //     await ErrorResponse(context, StatusCodes.Status401Unauthorized, EErrorCode.SessionIdNotFound);
-        //     return;
-        // }
-
-        //// sessionId가 일치하는지 검사
-        //if(!IsValidSessionId(context, sessionId, redisSessionId))
-        //{
-        //    await ErrorResponse(context, StatusCodes.Status401Unauthorized, EErrorCode.AuthFailWrongSessionId);
-        //    return;
-        //}
+        // redis에 sessionId가 존재하는지 확인
+        bool existSessionId = await redisDb.ExistSessionIdAsync(sessionId);
+        if (!existSessionId)
+        {
+            await ErrorResponse(context, StatusCodes.Status401Unauthorized, EErrorCode.SessionIdNotFound);
+            return;
+        }
 
         AuthInfo authInfo = new();
         authInfo.Uid = uid;

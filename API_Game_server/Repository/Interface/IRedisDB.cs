@@ -10,7 +10,7 @@ public interface IRedisDB
     public Task<SortedSetEntry[]> GetZsetRanks(string key, int page, int playerNum);
     public Task<long> GetZsetSize(string key);
     public Task<long> ClearZset(string key);
-    public Task<string> GetSessionIdAsync(Int64 uidKey);
+    public Task<bool> ExistSessionIdAsync(string sessionId);
     public Task SetHash<T>(string key, T obj) where T : class;
     public Task<string[]> GetHash(string key, string[] Items);
     public Task<bool> ClearHash(string key);
