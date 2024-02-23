@@ -27,6 +27,7 @@ public class CreateUserController : ControllerBase
         CreateUserRes response = new();
         EErrorCode errorCode;
 
+        // TODO : 김준철
         (errorCode, response.Uid) = await gameService.CreateUserGameData(request.UserId, request.UserName);
         // 유저 생성이 잘 됐으면
         if (errorCode == EErrorCode.None)
