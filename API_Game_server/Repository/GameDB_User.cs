@@ -48,12 +48,12 @@ public partial class GameDB : IGameDB
     }
     public async Task InsertUserAttendance(Int64 uid)
     {
-        await queryFactory.Query("USER_INFO")
+        await queryFactory.Query("ATTENDANCE_INFO")
             .InsertGetIdAsync<int>(new
             {
                 uid = uid,
                 attendance_count = 0,
-                attendance_date = DateTime.Parse("0000-00-00"),
+                attendance_date = DateTime.Parse("1000-01-01 00:00:00"),
             });
     }
 }
