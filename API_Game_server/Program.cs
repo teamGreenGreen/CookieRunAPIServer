@@ -34,6 +34,7 @@ builder.Services.AddTransient<IMailService, MailService>();
 builder.Services.AddTransient<IAttendanceService, AttendanceService>();
 builder.Services.AddTransient<IRankService, RankService>();
 builder.Services.AddTransient<ICookieBuyService, CookieBuyService>();
+builder.Services.AddTransient<INowCookieService, NowCookieService>();
 // Add services about redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(opt =>
     ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));
