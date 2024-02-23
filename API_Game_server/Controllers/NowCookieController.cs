@@ -25,5 +25,13 @@ namespace API_Game_Server.Controllers
             (res.Result, res.NowCookieId) = await nowCookieService.NowCookieId(sessionId);
             return res;
         }
+        [HttpPost("Edit")]
+        public async Task<EditNowCookieRes> EditNowCookieId(EditNowCookieReq req)
+        {
+            string sessionId = HttpContext.Features.Get<string>();
+            EditNowCookieRes res = new EditNowCookieRes();
+            res.Result = await nowCookieService.EditNowCookieId(sessionId, req.CookieId);
+            return res;
+        }
     }
 }
