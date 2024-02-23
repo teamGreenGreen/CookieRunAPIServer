@@ -33,8 +33,8 @@ public class GameService : IGameService
     public async Task<EErrorCode> CreateUserMailBox(Int64 uid)
     {
         DateTime sevenDaysLater = DateTime.Now.AddDays(7);
-        string sender = "운영자";
-        string content = "신규 유저 보상";
+        string sender = "신규 유저 보상";
+        string content = "신규 유저 보상으로 다이아몬드 100개를 드립니다.";
         int count = 100;
         bool isRead = false;
         string rewardType = "diamond";

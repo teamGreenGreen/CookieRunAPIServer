@@ -31,7 +31,7 @@ public partial class GameDB : IGameDB
         {
             uid = id,
             sender = sender,
-            content = count,
+            content = content,
             reward_type = rewardType,
             count = count,
             is_read = isRead,
