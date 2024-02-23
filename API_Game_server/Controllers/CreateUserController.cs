@@ -12,12 +12,15 @@ public class CreateUserController : ControllerBase
     private readonly IAuthService authService;
     private readonly IGameService gameService;
     private readonly IUserService userService;
+    private readonly IAttendanceService attendanceService;
 
-    public CreateUserController(IAuthService authService, IGameService gameService, IUserService userService)
+
+    public CreateUserController(IAuthService authService, IGameService gameService, IUserService userService, IAttendanceService attendanceService)
     {
         this.authService = authService;
         this.gameService = gameService;
         this.userService = userService;
+        this.attendanceService = attendanceService;
     }
 
     // 게임 서버에 유저가 존재하지 않으면 만들어줘야 함
@@ -27,11 +30,12 @@ public class CreateUserController : ControllerBase
         CreateUserRes response = new();
         EErrorCode errorCode;
 
-        // TODO : 김준철
         (errorCode, response.Uid) = await gameService.CreateUserGameData(request.UserId, request.UserName);
         // 유저 생성이 잘 됐으면
         if (errorCode == EErrorCode.None)
         {
+            // 신규 유저 출석 데이터 생성
+            await attendanceService.CreateUserAttendanceData(response.Uid);
             // 신규 유저 보상 지급
             await gameService.CreateUserMailBox(response.Uid);
         }
