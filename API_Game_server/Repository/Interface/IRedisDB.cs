@@ -7,7 +7,7 @@ public interface IRedisDB
 {
     public Task<bool> SetZset(string key, string member, double score);
     public Task<long?> GetZsetRank(string key, string member);
-    public Task<RedisValue[]> GetZsetRanks(string key, int page);
+    public Task<SortedSetEntry[]> GetZsetRanks(string key, int page, int playerNum);
     public Task<long> GetZsetSize(string key);
     public Task<long> ClearZset(string key);
     public Task<string> GetSessionIdAsync(Int64 uidKey);

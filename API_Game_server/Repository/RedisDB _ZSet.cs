@@ -24,11 +24,18 @@ namespace API_Game_Server.Repository
             long? result = await _db.SortedSetRankAsync((RedisKey)key, (RedisValue)member, Order.Descending);
             return result;
         }
-        public async Task<RedisValue[]> GetZsetRanks(string key, int page)
+        public async Task<SortedSetEntry[]> GetZsetRanks(string key, int page, int playerNum)
+        {
+            long startNum = (page - 1) * playerNum;
+            long endNum = (page) * playerNum - 1;
+            SortedSetEntry[] result =  await _db.SortedSetRangeByRankWithScoresAsync(key, startNum, endNum, Order.Descending);
+            return result;
+        }
+        public async Task<RedisValue[]> GetZsetRanksScore(string key, int page)
         {
             long startNum = (page - 1) * 15;
             long endNum = (page) * 15 - 1;
-            RedisValue[] result = await _db.SortedSetRangeByRankAsync(key, startNum, endNum, Order.Descending);
+            RedisValue[] result = await _db.SortedSetRangeByRankAsync(key, startNum, endNum, order:Order.Descending);
             return result;
         }
         public async Task<long> GetZsetSize(string key)
