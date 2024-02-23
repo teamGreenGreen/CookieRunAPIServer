@@ -11,25 +11,26 @@ namespace API_Game_Server.Controllers
     [Route("[controller]")]
     [ApiController]
 
-    public class MailListController : ControllerBase
+    public class UserInfoLoadController : ControllerBase
     {
-        readonly IMailService mailService;
+        readonly IUserService userService;
 
-        public MailListController(IMailService mailService)
+        public UserInfoLoadController(IUserService userService)
         {
-            this.mailService = mailService;
+            this.userService = userService;
         }
 
         [HttpPost]
-        public async Task<MailListRes> PostAsync()
+        public async Task<UserInfoRes> PostAsync()
         {
             string sessionId = HttpContext.Features.Get<string>();
 
-            //응답 객체 생성
-            MailListRes res = new();
+            // 응답 객체 생성
+            UserInfoRes res = new();
 
-            // 메일 리스트 불러오기
-            res.Result = await mailService.GetMailListAsync(sessionId, res);
+            // 요청 검증
+            res.Result = await userService.GetUserInfoBySessionId(sessionId, res);
+
             return res;
         }
     }

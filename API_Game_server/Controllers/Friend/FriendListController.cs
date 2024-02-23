@@ -18,10 +18,11 @@ namespace API_Game_Server.Controllers
             friendListService = _friendListService;
         }
         [HttpPost]
-        public async Task<FriendListRes> GetFriendList(FriendListReq req)
+        public async Task<FriendListRes> GetFriendList()
         {
+            string sessionId = HttpContext.Features.Get<string>();
             FriendListRes res = new FriendListRes();
-            (res.Result, res.FriendList) = await friendListService.FriendList(req.MyToken);
+            (res.Result, res.FriendList) = await friendListService.FriendList(sessionId);
             return res;
         }
     }

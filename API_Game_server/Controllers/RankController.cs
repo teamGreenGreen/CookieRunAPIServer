@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
 using API_Game_Server.Services;
 using API_Game_Server.Services.Interface;
+using API_Game_Server.Repository.Interface;
 
 namespace API_Game_Server.Controllers
 {
@@ -20,10 +21,11 @@ namespace API_Game_Server.Controllers
         }
         // 토큰을 인자로 넘기면, 등수를 알 수 있다.
         [HttpPost("user")]
-        public async Task<RankGetRes> GetRank(RankGetReq req)
+        public async Task<RankGetRes> GetRank()
         {
+            string sessionId = HttpContext.Features.Get<string>();
             RankGetRes res = new RankGetRes();
-            res.Result = await service.GetRank(req, res);
+            res.Result = await service.GetRank(sessionId, res);
             return res;
         }
         // 조회하고자 하는 page를 인자로 넘기면

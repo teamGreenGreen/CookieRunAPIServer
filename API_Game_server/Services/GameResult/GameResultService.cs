@@ -6,6 +6,8 @@ using Microsoft.VisualBasic.FileIO;
 using System;
 using API_Game_Server.Services.Interface;
 using API_Game_Server.Repository.Interface;
+using Microsoft.Extensions.Primitives;
+using System.Text.Json;
 
 namespace API_Game_Server.Services
 {
@@ -39,49 +41,29 @@ namespace API_Game_Server.Services
             ReadGameData();
         }
 
-        public async Task<EErrorCode> ValidateRequestAsync(GameResultReq req)
+        public async Task<EErrorCode> ValidateRequestAsync(string sessionId, GameResultReq req)
         {
-            // UID 얻기
-            long uid = -1;
-            string stringUid;
             try
             {
-                stringUid = await validationService.GetUid(req.Token);
-                uid = long.Parse(stringUid);
+                // 레디스에서 데이터 가져오기
+                string sessionIdKey = string.Format("user_info:session_id:{0}", sessionId);
+                string redisFindResult = await redisDB.GetString(sessionIdKey);
+
+                // 가져온 json 문자열을 userInfo로 역직렬화
+                userInfo = JsonSerializer.Deserialize<UserInfo>(redisFindResult);
             }
             catch
             {
-                return EErrorCode.InvalidToken;
-            }
+                // TODO.김초원 : 로그아웃 처리
 
-            try
-            {
-                // Redis에서 정보 찾기
-                string uidKey = string.Format("user_info:uid:{0}", stringUid);
-                string[] arrValues = { "UserName", "Level", "Exp", "Money", "MaxScore", "Diamond" };
-                string[] value = await redisDB.GetHash(uidKey, arrValues);
-
-                userInfo = new UserInfo
-                {
-                    Uid = uid,
-                    UserName = value[0],
-                    Level = int.Parse(value[1]),
-                    Exp = int.Parse(value[2]),
-                    Money = int.Parse(value[3]),
-                    MaxScore = int.Parse(value[4]),
-                    Diamond = int.Parse(value[5])
-                };
-            }
-            catch
-            {
-                userInfo = await gameDB.GetUserByUid(uid);
+                return EErrorCode.GameResultService_GetRedisUserInfoFail;
             }
 
             // 플레이 검증
-            return ValidatePlay(req); 
+            return ValidatePlay(req);
         }
 
-        public async Task<EErrorCode> GiveRewardsAsync(GameResultReq req, GameResultRes res)
+        public async Task<EErrorCode> GiveRewardsAsync(string sessionId, GameResultReq req, GameResultRes res)
         {
             int newMoney = 0;
             int newExp = 0;
@@ -108,7 +90,7 @@ namespace API_Game_Server.Services
             catch
             {
                 //TODO.김초원 : 유저 정보가 업데이트 되지 않은 경우
-                return EErrorCode.GameResultService_UserInfoUpdateError;
+                return EErrorCode.GameResultService_DBUserInfoUpdateFail;
             }
 
             try
@@ -124,9 +106,9 @@ namespace API_Game_Server.Services
                 return EErrorCode.GameResultService_AddLevelUpRewardFail;
             }
 
-            RedisUserInfo redisUserInfo = new RedisUserInfo
+            UserInfo redisUserInfo = new UserInfo
             {
-                SessionId = req.Token,
+                Uid = userInfo.Uid,
                 UserName = userInfo.UserName,
                 Level = newLevel,
                 Exp = newExp,
@@ -139,7 +121,7 @@ namespace API_Game_Server.Services
             try
             {
                 await redisDB.SetZset("rank", userInfo.UserName, newMaxScore);
-                await redisDB.SetHash($"user_info:uid:{userInfo.Uid}", redisUserInfo);
+                await redisDB.SetString<UserInfo>($"user_info:session_id:{sessionId}", redisUserInfo);
             }
             catch
             {
@@ -149,6 +131,14 @@ namespace API_Game_Server.Services
             res.Exp = newExp;
             res.Level = newLevel;
             res.Money = newMoney;
+            if (res.Level + 1 > userLevelData.Count)
+            {
+                res.MaxExp = 99999999;
+            }
+            else
+            {
+                res.MaxExp = userLevelData[res.Level + 1].MinExp;
+            }
 
             return EErrorCode.None;
         }
@@ -182,6 +172,8 @@ namespace API_Game_Server.Services
 
         public int CalcExp()
         {
+            
+
             return userInfo.Exp + totalScore;
         }
 
@@ -361,7 +353,6 @@ namespace API_Game_Server.Services
                     if (int.TryParse(rows[i][4], out int expBonus)) cookie.ExpBonus = expBonus;
                     if (int.TryParse(rows[i][5], out int MoneyBonus)) cookie.MoneyBonus = MoneyBonus;
                     if (uint.TryParse(rows[i][6], out uint diamondCost)) cookie.DiamondCost = diamondCost;
-                    if (uint.TryParse(rows[i][7], out uint moneyCost)) cookie.MoneyCost = moneyCost;
 
                     cookieData.Add(id, cookie);
                 }

@@ -4,12 +4,12 @@ using API_Game_Server.Model.DAO;
 namespace API_Game_Server.Model.DTO
 {
     //  요청 데이터
-    public class FriendDeleteReq
+    public class CookieBuyReq
     {
-        public string FriendName { get; set; }
+        public int CookieId { get; set; }
     }
     // 응답 데이터
-    public class FriendDeleteRes : ErrorCodeDTO
+    public class CookieBuyRes : ErrorCodeDTO
     {
         
     }

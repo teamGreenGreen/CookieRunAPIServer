@@ -31,24 +31,24 @@ public enum EErrorCode
     FriendReqAcceptFailTargetFriendCountExceeded = 2006,
 
     // GameResult 3000~3099
-    GameResultService_PlayerSpeedChangedDetected    = 3000,
-    GameResultService_MoneyOrExpChangedDetected     = 3001,
-    GameResultService_RewardCalcFail                = 3002,
-    GameResultService_AddLevelUpRewardFail          = 3003,
-    GameResultService_UserInfoUpdateError           = 3004,
-    GameResultService_RedisUpdateError              = 3005,
+    GameResultService_PlayerSpeedChangedDetected = 3000,
+    GameResultService_MoneyOrExpChangedDetected = 3001,
+    GameResultService_RewardCalcFail = 3002,
+    GameResultService_AddLevelUpRewardFail = 3003,
+    GameResultService_DBUserInfoUpdateFail = 3004,
+    GameResultService_GetRedisUserInfoFail = 3005,
+    GameResultService_RedisUpdateError = 3006,
 
     // GameDB_Mail 3100~3199
-    MailService_OpenFail                            = 3100,
-    MailService_GetListFail                         = 3101,
-    MailService_GetInfoFail                         = 3102,
-    MailService_RewardFail                          = 3103,
-    MailService_CreateMailBoxFail                   = 3104,
+    MailService_OpenFail = 3100,
+    MailService_GetListFail = 3101,
+    MailService_GetInfoFail = 3102,
+    MailService_RewardFail = 3103,
+    MailService_CreateMailBoxFail = 3104,
+    MailService_GetRedisUserInfoFail = 3105,
 
-    // GameDB_GameResult 3200~3299
-    //GameDB_GetUserInfoFail = 3201,
-    //GameDB_UpdateUserInfoFail = 3202,
-    //GameDB_UpdateUserInfoFail = 3202,
+    // UserInfoLoad 3200 ~ 3299
+    UserService_GetRedisUserInfoFail = 3200,
 
     // Attendance 4000~4099
     AttendanceCountError = 4000,
@@ -62,5 +62,8 @@ public enum EErrorCode
     IsNewbie = 4100,
     RankersNotExist = 4101,
     NoBodyInRanking = 4102,
+
+    // CookieBuy 4200 ~ 4300
+    NotEnoughDiamond = 4200,
 
 }

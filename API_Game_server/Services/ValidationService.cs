@@ -1,3 +1,4 @@
+using API_Game_Server.Model.DAO;
 using API_Game_Server.Repository;
 using API_Game_Server.Repository.Interface;
 using API_Game_Server.Services.Interface;
@@ -11,10 +12,10 @@ namespace API_Game_Server.Services
         {
             redisDB = _redisDB;
         }
-        public async Task<string> GetUid(string Token)
+        public async Task<long> GetUid(string sessionId)
         {
-            string tokenKey = string.Format("token:{0}",Token);
-            string myUid = await redisDB.GetString(tokenKey);
+            UserInfo userInfo = await redisDB.GetString<UserInfo>($"user_info:session_id:{sessionId}");
+            long myUid = userInfo.Uid;
             return myUid;
         }
     }

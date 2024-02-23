@@ -5,5 +5,5 @@ namespace API_Game_Server.Services.Interface;
 
 public interface IFriendRequestAcceptService
 {
-    public Task<EErrorCode> FriendRequestAccept(string token, long requestId);
+    public Task<EErrorCode> FriendRequestAccept(long requestId);
 }

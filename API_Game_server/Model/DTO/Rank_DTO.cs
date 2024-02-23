@@ -15,10 +15,6 @@ namespace API_Game_Server.Model.DTO
     {
         public string[]? Ranks { get; set; }
     }
-    public class RankGetReq
-    {
-        public string? Token { get; set; }
-    }
     public class  RankGetRes : ErrorCodeDTO
     {
         public long Rank { get; set; }

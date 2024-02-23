@@ -10,19 +10,19 @@ namespace API_Game_Server.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class FriendDeleteController : ControllerBase
+    public class CookieBuyController : ControllerBase
     {
-        private readonly IFriendDeleteService friendDeleteService;
-        public FriendDeleteController(IFriendDeleteService _friendDeleteService)
+        private readonly ICookieBuyService cookieBuyService;
+        public CookieBuyController(ICookieBuyService _cookieBuyService)
         {
-            friendDeleteService = _friendDeleteService;
+            cookieBuyService = _cookieBuyService;
         }
         [HttpPost]
-        public async Task<FriendDeleteRes> FriendDelete(FriendDeleteReq req)
+        public async Task<CookieBuyRes> CookieBuy(CookieBuyReq req)
         {
             string sessionId = HttpContext.Features.Get<string>();
-            FriendDeleteRes res = new FriendDeleteRes();
-            res.Result = await friendDeleteService.FriendDelete(sessionId, req.FriendName);
+            CookieBuyRes res = new CookieBuyRes();
+            res.Result = await cookieBuyService.CookieBuy(sessionId, req.CookieId);
             return res;
         }
     }
