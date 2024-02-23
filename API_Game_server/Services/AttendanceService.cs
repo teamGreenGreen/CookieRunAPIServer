@@ -202,5 +202,9 @@ namespace API_Game_Server.Services
             // 5. res 반환 - EErrorCode.None
             return resultCode;
         }
+        public async Task CreateUserAttendanceData(Int64 uid)
+        {
+            await gameDB.InsertUserAttendance(uid);
+        }
     }
 }
