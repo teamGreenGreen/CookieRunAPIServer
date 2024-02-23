@@ -52,13 +52,13 @@ public class VerifyUserAuth
             return;
         }
         
-        // redis에서 uid에 해당하는 sessionId를 불러옴
-        string redisSessionId = await redisDb.GetSessionIdAsync(uid);
-        if(redisSessionId == null)
-        {
-            await ErrorResponse(context, StatusCodes.Status401Unauthorized, EErrorCode.SessionIdNotFound);
-            return;
-        }
+        // // redis에서 uid에 해당하는 sessionId를 불러옴
+        // string redisSessionId = await redisDb.GetSessionIdAsync(uid);
+        // if(redisSessionId == null)
+        // {
+        //     await ErrorResponse(context, StatusCodes.Status401Unauthorized, EErrorCode.SessionIdNotFound);
+        //     return;
+        // }
 
         //// sessionId가 일치하는지 검사
         //if(!IsValidSessionId(context, sessionId, redisSessionId))
