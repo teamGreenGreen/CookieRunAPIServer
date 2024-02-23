@@ -6,14 +6,19 @@ namespace API_Game_Server.Repository;
 
 public partial class RedisDB : IRedisDB
 {
-    private const string authUid = "user_info:uid:";
+    private const string authUid = "user_info:session_id:";
 
-    public async Task<string> GetSessionIdAsync(Int64 uidKey)
+    public async Task<bool> ExistSessionIdAsync(string sessionId)
     {
-        string uid = authUid + uidKey.ToString();
-        string[] uidValues = { "SessionId" };
-        string[] sessionId = await GetHash(uid, uidValues);
+        string key = authUid + sessionId;
 
-        return sessionId[0];
+        string redisSessionId = await GetString(key);
+
+        if (redisSessionId == "")
+        {
+            return false;
+        }
+
+        return true;
     }
 }
