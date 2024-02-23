@@ -12,3 +12,4 @@ public class UserInfo
     public int AcquiredCookieId { get; set; }
     public int Diamond { get; set; }
 }
+    
