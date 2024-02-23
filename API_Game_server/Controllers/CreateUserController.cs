@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API_Game_Server.Controllers;
 
+[Route("[controller]")]
+[ApiController]
 public class CreateUserController : ControllerBase
 {
     private readonly IAuthService authService;

@@ -9,6 +9,7 @@ public class UserInfo
     public int Exp { get; set; }
     public int Money { get; set; }
     public int MaxScore { get; set; }
-    public byte[] AcquiredCookieId { get; set; }
+    public int AcquiredCookieId { get; set; }
     public int Diamond { get; set; }
 }
+    
