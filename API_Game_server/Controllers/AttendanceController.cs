@@ -15,7 +15,7 @@ namespace API_Game_Server.Controllers
     public class AttendanceController : ControllerBase
     {
         private readonly IAttendanceService service;
-        private readonly short maxDate = 32;
+        private readonly short maxDate = 19;
         public AttendanceController(IAttendanceService _service)
         {
             service = _service;
