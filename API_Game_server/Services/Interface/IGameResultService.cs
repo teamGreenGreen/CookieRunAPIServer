@@ -11,7 +11,7 @@ public interface IGameResultService
     public Task<EErrorCode> GiveRewardsAsync(string sessionId, GameResultReq req, GameResultRes res);
     public int CalcMaxScore();
     public int CalcMoney();
-    public int CalcExp();
+    public Tuple<int, int> CalcExpAndLevel();
     public Task UpdateUserInfoAsync(long uid, int newLevel, int newExp, int newMoney, int newDiamond, int newMaxScore, string userName);
     public void ReadGameData();
     public void ReadItemData();
