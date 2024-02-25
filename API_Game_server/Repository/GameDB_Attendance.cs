@@ -14,10 +14,11 @@ public partial class GameDB : IGameDB
 {
     public async Task<AttendanceInfo> GetUserAttendance(long uid)
     {
-        return await queryFactory.Query("ATTENDANCE_INFO")
-            .Select("uid as Uid, attendance_count as AttendanceCount, attendance_count as AttendanceDate")
-            .Where("uid",uid)
+        AttendanceInfo res = await queryFactory.Query("ATTENDANCE_INFO")
+            .Select("uid as Uid", "attendance_count as AttendanceCount", "attendance_date as AttendanceDate")
+            .Where("uid", uid)
             .FirstOrDefaultAsync<AttendanceInfo>();
+        return res;
     }
     public async Task<AttendanceInfo> SetUserAttendance(AttendanceInfo info, bool flag = true)
     {
@@ -25,11 +26,13 @@ public partial class GameDB : IGameDB
         AttendanceInfo updateInfo = new AttendanceInfo ();
         if (flag)
         {
+            updateInfo.Uid = info.Uid;
             updateInfo.AttendanceCount = info.AttendanceCount + 1;
             updateInfo.AttendanceDate = now;
         }
         else
         {
+            updateInfo.Uid = info.Uid;
             updateInfo.AttendanceCount = 0;
             updateInfo.AttendanceDate = info.AttendanceDate;
         }
@@ -37,7 +40,7 @@ public partial class GameDB : IGameDB
         int res = await queryFactory.Query("ATTENDANCE_INFO")
             .Where("uid", info.Uid)
             .UpdateAsync(new {
-                attendance_count = updateInfo.AttendanceDate,
+                attendance_count = updateInfo.AttendanceCount,
                 attendance_date = updateInfo.AttendanceDate
             });
         if (res == null) return null;

@@ -144,7 +144,8 @@ namespace API_Game_Server.Services
         {
             // 유저 출석 정보 가져오기
             long userUid = await validation.GetUid(sessionId);
-            return await gameDB.GetUserAttendance(userUid);
+            AttendanceInfo res = await gameDB.GetUserAttendance(userUid);
+            return res;
         }
         public async Task<AttendanceInfo> HasAttended(string sessionId)
         {
@@ -164,7 +165,7 @@ namespace API_Game_Server.Services
         {
             // 보상 검색
             RewardItem res = new RewardItem();
-            string reward = CalendarReward.Instance.rewards[count];
+            string reward = CalendarReward.Instance.rewards[count-1];
             res.Name = reward.Split(":")[0];
             res.Count = Int32.Parse(reward.Split(":")[1]);
             return res;
