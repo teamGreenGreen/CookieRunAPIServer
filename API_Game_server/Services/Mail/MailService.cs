@@ -106,11 +106,13 @@ namespace API_Game_Server.Services
                 {
                     int newDiamond = userInfo.Diamond + mailInfo.Count;
                     await gameDB.UpdateUserInfoAsync(uid, userInfo.Level, userInfo.Exp, userInfo.Money, newDiamond, userInfo.MaxScore, userInfo.UserName);
+                    userInfo.Diamond = newDiamond;
                 }
                 else if (mailInfo.RewardType == "money")
                 {
                     int newMoney = userInfo.Money + mailInfo.Count;
                     await gameDB.UpdateUserInfoAsync(uid, userInfo.Level, userInfo.Exp, newMoney, userInfo.Diamond, userInfo.MaxScore, userInfo.UserName);
+                    userInfo.Money = newMoney;
                 }
             }
             catch
@@ -121,6 +123,8 @@ namespace API_Game_Server.Services
                 //아니면 for문으로 retryCount를 줘서 일정 횟수만큼 다시 시도할지?)
                 return EErrorCode.MailService_RewardFail;
             }
+
+            await redisDB.SetString<UserInfo>($"user_info:session_id:{sessionId}", userInfo);
 
             return EErrorCode.None;
         }
