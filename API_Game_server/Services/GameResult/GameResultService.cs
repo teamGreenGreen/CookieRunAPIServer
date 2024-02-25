@@ -73,8 +73,9 @@ namespace API_Game_Server.Services
             try
             {
                 newMoney = CalcMoney();
-                newExp = CalcExp();
-                newLevel = CalcLevel(newExp);
+                Tuple<int, int> tupleValue = CalcExpAndLevel();
+                newExp = tupleValue.Item1;
+                newLevel = tupleValue.Item2;
                 newMaxScore = CalcMaxScore();
             }
             catch
@@ -170,26 +171,22 @@ namespace API_Game_Server.Services
             return userInfo.Money + totalMoney < maxMoney ? userInfo.Money + totalMoney : maxMoney;
         }
 
-        public int CalcExp()
+        public Tuple<int, int> CalcExpAndLevel()
         {
-            
-
-            return userInfo.Exp + totalScore;
-        }
-
-        public int CalcLevel(int newExp)
-        {
+            int newExp = userInfo.Exp + totalScore;
             int newLevel = userInfo.Level;
-            for (int level = newLevel; level <= userLevelData.Count; level++)
+            for (int level = userInfo.Level + 1; level <= userLevelData.Count; level++)
             {
                 if (newExp < userLevelData[level].MinExp)
                 {
-                    newLevel = level - 1;
                     break;
                 }
+
+                newLevel = level;
+                newExp -= userLevelData[newLevel].MinExp;
             }
 
-            return newLevel;
+            return Tuple.Create(newExp, newLevel);
         }
 
         public Task UpdateUserInfoAsync(long uid, int newLevel, int newExp, int newMoney, int newDiamond, int newMaxScore, string userName)
@@ -224,7 +221,7 @@ namespace API_Game_Server.Services
                 {
                     int itemId = pair.Key;
                     int count = pair.Value;
-                    totalScore += itemData[itemId].ScorePoint * count;
+                    totalScore += itemData[itemId].ScorePoint  * count;
                     totalMoney += itemData[itemId].MoneyPoint * count;
                 }
 

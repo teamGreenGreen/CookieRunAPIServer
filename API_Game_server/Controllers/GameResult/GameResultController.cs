@@ -22,7 +22,7 @@ namespace API_Game_Server.Controllers
         [HttpPost]
         public async Task<GameResultRes> PostAsync(GameResultReq req)
         {
-            string sessionId = HttpContext.Features.Get<string>();
+             string sessionId = HttpContext.Features.Get<string>();
 
             //응답 객체 생성
             GameResultRes res = new();
