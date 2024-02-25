@@ -6,6 +6,7 @@ using API_Game_Server.Repository.Interface;
 using API_Game_Server.Resources;
 using API_Game_Server.Services.Interface;
 using Microsoft.VisualBasic.FileIO;
+using SqlKata.Execution;
 using StackExchange.Redis;
 using System.Runtime;
 
@@ -170,16 +171,25 @@ namespace API_Game_Server.Services
             res.Count = Int32.Parse(reward.Split(":")[1]);
             return res;
         }
-        public async Task<EErrorCode> GiveAndUpdateReward(AttendanceInfo info, RewardItem rewardItem)
+        public async Task<EErrorCode> GiveAndUpdateReward(string sessionId, AttendanceInfo info, RewardItem rewardItem)
         {
             UserInfo user = await gameDB.GetUserByUid(info.Uid);
             if (user == null)
             {
                 return EErrorCode.NotExistUserDoingReward;
             }
-
+            // ganeDB 업데이트
             await gameDB.UpdateReward(user, rewardItem);
-
+            // redis 업데이트
+            if (rewardItem.Name == "money")
+            {
+                user.Money = user.Money + rewardItem.Count;
+            }
+            else if (rewardItem.Name == "diamond")
+            {
+                user.Diamond = user.Diamond + rewardItem.Count;
+            }
+            await redisDB.SetString<UserInfo>($"user_info:session_id:{sessionId}", user);
             return EErrorCode.None;
         }
         public async Task<EErrorCode> RequestAttendance(string sessionId, AttendanceRes res)
@@ -199,7 +209,8 @@ namespace API_Game_Server.Services
             // 3. 보상 검색
             RewardItem rewardItem = await SearchReward(resInfo.AttendanceCount);
             // 4. 보상 지급
-            EErrorCode resultCode = await GiveAndUpdateReward(resInfo, rewardItem);
+            res.AttendanceCount = resInfo.AttendanceCount;
+            EErrorCode resultCode = await GiveAndUpdateReward(sessionId, resInfo, rewardItem);
             // 5. res 반환 - EErrorCode.None
             return resultCode;
         }

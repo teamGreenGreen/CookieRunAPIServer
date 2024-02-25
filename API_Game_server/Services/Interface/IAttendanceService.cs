@@ -17,7 +17,7 @@ public interface IAttendanceService
     public Task<AttendanceInfo> GetAttInfo(string sessionId);
     public Task<AttendanceInfo> HasAttended(string sessionId);
     public Task<RewardItem> SearchReward(int count);
-    public Task<EErrorCode> GiveAndUpdateReward(AttendanceInfo info, RewardItem rewardItem);
+    public Task<EErrorCode> GiveAndUpdateReward(string sessionId, AttendanceInfo info, RewardItem rewardItem);
     public Task<EErrorCode> RequestAttendance(string sessionId, AttendanceRes res);
     public Task CreateUserAttendanceData(Int64 uid);
 }
