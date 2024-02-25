@@ -162,7 +162,7 @@ namespace API_Game_Server.Services
             {
                 rewardCount += i * 10;
                 DateTime sevenDaysLater = DateTime.Now.AddDays(7);
-                _ = mailService.AddMailAsync(userInfo.Uid, "운영자", "레벨" + i + "달성을 축하합니다.", rewardCount, false, "diamond", sevenDaysLater);
+                _ = mailService.AddMailAsync(userInfo.Uid, "레벨 업 보상", "레벨" + i + "달성을 축하합니다." , rewardCount, false, "diamond", sevenDaysLater);
             }
         }
 
