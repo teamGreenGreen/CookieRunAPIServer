@@ -19,4 +19,9 @@ namespace API_Game_Server.Model.DTO
     public class MailOpenRes : ErrorCodeDTO
     {
     }
+
+    public class MailDeleteRes : ErrorCodeDTO
+    {
+
+    }
 }
