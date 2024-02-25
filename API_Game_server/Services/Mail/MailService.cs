@@ -55,6 +55,45 @@ namespace API_Game_Server.Services
             return gameDB.AddMailAsync(id, sender, content, count, isRead, rewardType, expiredAt);
         }
 
+        public async Task<EErrorCode> DeleteMailAsync(string sessionId, MailOpenReq req)
+        {
+            // sessionId를 통해 Uid 얻기
+            long uid = -1;
+
+            try
+            {
+                uid = await validationService.GetUid(sessionId);
+            }
+            catch
+            {
+                return EErrorCode.MailService_GetRedisUserInfoFail;
+            }
+
+            MailInfo mailInfo;
+
+            // (1) 메일, 유저 정보 가져오기
+            try
+            {
+                mailInfo = await gameDB.GetMailAsync(uid, req.MailboxId);
+            }
+            catch
+            {
+                return EErrorCode.MailService_GetInfoFail;
+            }
+
+            // (2) 읽음 표시
+            try
+            {
+                await gameDB.UpdateMailAsync(uid, req.MailboxId);
+            }
+            catch
+            {
+                return EErrorCode.MailService_OpenFail;
+            }
+
+            return EErrorCode.None;
+        }
+
         public async Task<EErrorCode> OpenMailAsync(string sessionId, MailOpenReq req)
         {
             // sessionId를 통해 Uid 얻기

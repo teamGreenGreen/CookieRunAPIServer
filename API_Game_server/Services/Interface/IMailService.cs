@@ -9,4 +9,5 @@ public interface IMailService
     public Task<EErrorCode> GetMailListAsync(string sessionId, MailListRes res);
     public Task AddMailAsync(long id, string sender, string content, int count, bool isRead, string rewardType, DateTime expiredAt);
     public Task<EErrorCode> OpenMailAsync(string sessionId, MailOpenReq req);
+    public Task<EErrorCode> DeleteMailAsync(string sessionId, MailOpenReq req);
 }
