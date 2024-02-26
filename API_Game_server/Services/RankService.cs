@@ -20,7 +20,7 @@ namespace API_Game_Server.Services
         {
             long userUid = await validationService.GetUid(sessionId);
             UserInfo userInfo = await redisDB.GetString<UserInfo>($"user_info:session_id:{sessionId}");
-            var result = await redisDB.GetZsetRank("rank", userUid.ToString());
+            var result = await redisDB.GetZsetRank("rank", userInfo.UserName);
             if (result == null)
             {
                 // 유저가 랭킹에 존재하지 않는다. -> 아직 게임을 진행하지 않은 유저
