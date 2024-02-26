@@ -78,4 +78,3 @@ echo
 
 echo "### Reloading nginx ..."
 docker compose exec nginx nginx -s reload
-출처: https://myvelop.tistory.com/191 [MYVELOP 마이벨롭:티스토리]
