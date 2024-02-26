@@ -31,17 +31,17 @@ namespace API_Game_Server.Services
             if (redisRes == "")
             {
                 // 해당 key가 존재하지 않는다.
-                // GameDB에는 존재하는지 확인
+                // 서버에 존재하는지 확인
                 serverDate = ReadData();
                 if (serverDate == null)
                 {
-                    // GameDB에도 없다. 오늘을 기준으로 한다.
+                    // 서버에도 없다. 오늘을 기준으로 한다.
                     await redisDB.SetString("attendance_date_info:start", now.ToString());
                     serverDate = WriteDate(now);
                 }
                 else
                 {
-                    // GameDB에는 있다. Redis에 등록한다.
+                    // 서버에는 있다. Redis에 등록한다.
                     await redisDB.SetString("attendance_date_info:start", serverDate.ToString());
                 }
             }
@@ -116,29 +116,18 @@ namespace API_Game_Server.Services
         }
         public DateTime? ReadData()
         {
-            string filePath = "./Resources/AttendanceDate.csv";
-            // 파일이 존재하지 않으면 null 반환
-            if (!File.Exists(filePath))
-            {
-                return null;
-            }
-            // 파일이 존재한다면 파일 읽기
-            string row = "";
-            using (TextFieldParser parser = new TextFieldParser(filePath))
-                // csv에 저장된 날짜 읽기
-                row = parser.ReadLine();
+            DateTime? time = AttendanceDate.Instance.date;
             // 데이터가 있으면 반환
-            if (row != null)
+            if (time != null)
             {
-                return Convert.ToDateTime(row);
+                return time;
             }
             // 비어있으면 null 반환
             return null;
         }
         public DateTime WriteDate(DateTime date)
         {
-            string filePath = "./Resources/AttendanceDate.csv";
-            File.WriteAllText(filePath, date.ToString());
+            AttendanceDate.Instance.date = date;
             return date;
         }
         public async Task<AttendanceInfo> GetAttInfo(string sessionId)
