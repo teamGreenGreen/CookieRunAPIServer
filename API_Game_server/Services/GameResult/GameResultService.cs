@@ -115,7 +115,9 @@ namespace API_Game_Server.Services
                 Exp = newExp,
                 Money = newMoney,
                 MaxScore = newMaxScore,
-                Diamond = userInfo.Diamond
+                Diamond = userInfo.Diamond,
+                AcquiredCookieId = userInfo.AcquiredCookieId,
+                UserId = userInfo.UserId
             };
 
             // Redis 저장
