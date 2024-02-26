@@ -2,21 +2,21 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8081
+EXPOSE 8444
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["../../API_Game_Server.csproj", "."]
-RUN dotnet restore "API_Game_Server.csproj"
+COPY ["Auth_Server.csproj", "."]
+RUN dotnet restore "Auth_Server.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "API_Game_Server.csproj" -c Release -o /app/build
+RUN dotnet build "Auth_Server.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "API_Game_Server.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Auth_Server.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "API_Game_Server.dll"]
+ENTRYPOINT ["dotnet", "Auth_Server.dll"]
