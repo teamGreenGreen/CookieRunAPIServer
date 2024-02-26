@@ -136,7 +136,7 @@ namespace API_Game_Server.Services
             // (3) 보상하기
             try
             {
-                if (mailInfo.RewardType == "none")
+                if (mailInfo.RewardType == "")
                 {
                     return EErrorCode.None;
                 }

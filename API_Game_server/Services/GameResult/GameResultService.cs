@@ -217,25 +217,23 @@ namespace API_Game_Server.Services
             totalScore = 0;
             if (items != null)
             {
+                int expBonus = cookieData[cookieId].ExpBonus;
+                int moneyBonus = cookieData[cookieId].MoneyBonus;
                 foreach (var pair in items)
                 {
                     int itemId = pair.Key;
                     int count = pair.Value;
-                    totalScore += itemData[itemId].ScorePoint  * count;
-                    totalMoney += itemData[itemId].MoneyPoint * count;
-                }
+                    for(int i = 0; i < count; i++)
+                    {
+                        int curScore = itemData[itemId].ScorePoint;
+                        int curMoney = itemData[itemId].MoneyPoint;
+                        totalScore += curScore;
+                        totalScore += curScore / 100 * expBonus;
 
-                int expBonus = cookieData[cookieId].ExpBonus;
-                int moneyBonus = cookieData[cookieId].MoneyBonus;
+                        totalMoney += curMoney;
+                        totalMoney += curMoney / 100 * moneyBonus;
+                    }
 
-                if (expBonus != 0)
-                {
-                    totalScore += totalScore / 100 * expBonus;
-                }
-
-                if (moneyBonus != 0)
-                {
-                    totalMoney += totalMoney / 100 * moneyBonus;
                 }
 
                 if (score != totalScore || money != totalMoney)
