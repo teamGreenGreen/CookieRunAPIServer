@@ -6,6 +6,7 @@ using API_Game_Server.Services.Interface;
 using API_Game_Server.Repository.Interface;
 using System.Text.Json;
 using Microsoft.VisualBasic.FileIO;
+using API_Game_Server.Resources;
 
 namespace API_Game_Server.Services
 {
@@ -22,27 +23,20 @@ namespace API_Game_Server.Services
         }
         public int ReadCookieData(int cookieId)
         {
-            string filePath = "./Resources/CookieData.csv";
-            using (TextFieldParser parser = new TextFieldParser(filePath))
+            // DataCookie의 인스턴스를 얻어옴
+            DataCookie dataCookieInstance = DataCookie.Instance;
+
+            // 쿠키 ID에 해당하는 쿠키를 찾아서 그 쿠키의 DiamondCost를 반환
+            foreach (var cookie in dataCookieInstance.Cookies)
             {
-                parser.TextFieldType = FieldType.Delimited; // 필드가 구분자로 구분되어 있음을 설정
-                parser.SetDelimiters(","); // 쉼표로 구분
-
-                // CSV 파일의 각 줄을 저장할 리스트
-                List<string[]> rows = new List<string[]>();
-
-                // 파일의 모든 줄을 읽어서 리스트에 추가
-                while (!parser.EndOfData)
+                if (cookie.ID == cookieId)
                 {
-                    string[]? fields = parser.ReadFields(); // 현재 줄의 필드 배열을 읽음
-                    if (fields != null)
-                    {
-                        rows.Add(fields); // 리스트에 추가
-                    }
+                    return cookie.DiamondCost;
                 }
-
-                return int.Parse(rows[cookieId][6]);
             }
+
+            // 쿠키를 찾지 못한 경우 -1을 반환
+            return -1;
         }
         public async Task<EErrorCode> CookieBuy(string sessionId, int cookieId)
         {
