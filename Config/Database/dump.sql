@@ -45,3 +45,16 @@ CREATE TABLE GameDB.ATTENDANCE_INFO
   `attendance_count` INT NOT NULL,
   `attendance_date` DATE NOT NULL
 );
+
+CREATE TABLE GameDB.MAILBOX
+(
+  `mailbox_id`  int              AUTO_INCREMENT PRIMARY KEY,
+  `uid` BIGINT NOT NULL,
+  `sender` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `reward_type` varchar(255) NOT NULL,
+  `count` int NOT NULL,
+  `is_read` tinyint(1) NOT NULL,
+  `expired_at` datetime NOT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
