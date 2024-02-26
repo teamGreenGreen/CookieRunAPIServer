@@ -17,5 +17,6 @@ RUN dotnet publish "API_Game_Server.csproj" -c Release -o /app/publish /p:UseApp
 
 FROM base AS final
 WORKDIR /app
+COPY ./Resources/*.csv ./Resources/
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "API_Game_Server.dll"]

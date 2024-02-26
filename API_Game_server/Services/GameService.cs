@@ -34,8 +34,8 @@ public class GameService : IGameService
     {
         DateTime sevenDaysLater = DateTime.Now.AddDays(7);
         string sender = "신규 유저 보상";
-        string content = "신규 유저 보상으로 다이아몬드 100개를 드립니다.";
-        int count = 100;
+        int count = 200;
+        string content = "신규 유저 보상으로 다이아몬드 200개를 드립니다.";
         bool isRead = false;
         string rewardType = "diamond";
 
