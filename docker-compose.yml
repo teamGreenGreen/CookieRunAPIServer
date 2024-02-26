@@ -1,36 +1,43 @@
 version: "3.8"
 services:
-    api_game_server:
-        container_name: api_game_server
-        ports:
-            - "8080:8080"
-            - "8443:8443"
-        build:
-            context: ./API_Game_server
-            dockerfile: Dockerfile
-        networks:
-            - api-server
-    api_auth_server:
-        container_name: api_auth_server
-        ports:
-            - "8081:8081"
-            - "8444:8444"
-        build:
-            context: ./Auth_Server
-            dockerfile: Dockerfile
-        networks:
-            - api-server
     db:
         image: mysql:8.2
         container_name: mysql-db
         build:
             context: ./Config/Database
             dockerfile: Dockerfile        
+        restart:
+            always
         ports:
             - "3306:3306"
-        networks:
-            - api-server
+    redis:
+        image: redis
+        container_name: redis
+        restart:
+            always
+        ports:
+            - "6379:6379"
+    api_game_server:
+        container_name: api_game_server
+        ports:
+            - "5000:80"
+        build:
+            context: ./API_Game_server
+        restart:
+            always
+        depends_on:
+            - db
+            - redis
+    api_auth_server:
+        container_name: api_auth_server
+        ports:
+            - "5001:80"            
+        build:
+            context: ./Auth_Server
+            dockerfile: Dockerfile
+        restart:
+            always
+        depends_on:
+            - db
+            - redis
 
-networks:
-    api-server:
-        driver: bridge

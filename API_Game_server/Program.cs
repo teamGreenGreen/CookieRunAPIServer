@@ -47,8 +47,6 @@ var app = builder.Build();
 app.UseMiddleware<API_Game_Server.Middleware.VerifyUserAuth>();
 
 // Configure the HTTP request pipeline.
-app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.MapControllers();

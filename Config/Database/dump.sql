@@ -1,22 +1,47 @@
 CREATE DATABASE IF NOT EXISTS AccountDB;
 
-USE AccountDB;
+CREATE DATABASE IF NOT EXISTS GameDB;
 
-CREATE TABLE IF NOT EXISTS AccountDB.`Account`
+CREATE TABLE AccountDB.ACCOUNT
 (
-    Id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '계정번호',
-    LoginId VARCHAR(50) NOT NULL UNIQUE COMMENT '계정',
-    SaltValue VARCHAR(100) NOT NULL COMMENT  '암호화 값',
-    HashedPassword VARCHAR(100) NOT NULL COMMENT '해싱된 비밀번호',
-    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT '생성 날짜'
-) COMMENT '계정 정보 테이블';
+    `user_id`              BIGINT              AUTO_INCREMENT PRIMARY KEY,
+    `email`                VARCHAR(50),
+    `password`             VARCHAR(100),
+    `salt_value`           VARCHAR(100),
+    `created_at`           DATETIME
+);
 
+CREATE TABLE GameDB.USER_INFO 
+(
+    `uid`                  BIGINT              AUTO_INCREMENT PRIMARY KEY,
+    `user_id`              BIGINT,
+    `user_name`            VARCHAR(27),
+    `level`                INT,
+    `exp`                  INT,
+    `money`                INT,
+    `max_score`            INT,
+    `acquired_cookie_id`   INT,
+    `diamond`              INT
+);
 
-INSERT INTO AccountDB.`Account`(LoginId, SaltValue, HashedPassword)
-VALUES('더미1', 1234, 1234);
+CREATE TABLE GameDB.FRIEND_RELATIONSHIP 
+(
+    `relationship_id`      BIGINT              AUTO_INCREMENT PRIMARY KEY,
+    `from_user_name`       VARCHAR(27),
+    `to_user_name`         VARCHAR(27)
+);
 
-INSERT INTO AccountDB.`Account`(LoginId, SaltValue, HashedPassword)
-VALUES('더미2', 1234, 1234);
+CREATE TABLE GameDB.FRIEND_REQUEST
+(
+    `request_id`           BIGINT              AUTO_INCREMENT PRIMARY KEY,
+    `from_user_name`       VARCHAR(27),
+    `to_user_name`         VARCHAR(27)
+);
 
-INSERT INTO AccountDB.`Account`(LoginId, SaltValue, HashedPassword)
-VALUES('더미3', 1234, 1234);
+CREATE TABLE GameDB.ATTENDANCE_INFO
+(
+  `attendance_id`  BIGINT              AUTO_INCREMENT PRIMARY KEY,
+  `uid` BIGINT NOT NULL,
+  `attendance_count` INT NOT NULL,
+  `attendance_date` DATE NOT NULL
+);
