@@ -2,12 +2,11 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 11500
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["../../API_Game_Server.csproj", "."]
+COPY ["API_Game_Server.csproj", "."]
 RUN dotnet restore "API_Game_Server.csproj"
 COPY . .
 WORKDIR "/src/."
