@@ -68,19 +68,6 @@ public class VerifyUserAuth
         return (EErrorCode.SessionIdNotProvided, null);
     }
 
-    private (EErrorCode, int) GetUidFromHeader(HttpContext context)
-    {
-        StringValues uid;
-
-        if (context.Request.Headers.TryGetValue("Uid", out uid))
-        {           
-            return (EErrorCode.None, int.Parse(uid));
-        }
-
-        return (EErrorCode.UidNotProvided, 0);
-    }
-
-
     private async Task ErrorResponse(HttpContext context, int statusCode, EErrorCode errorCode)
     {
         context.Response.StatusCode = StatusCodes.Status400BadRequest;
@@ -90,15 +77,5 @@ public class VerifyUserAuth
         });
 
         await context.Response.WriteAsync(errorJsonResponse);
-    }
-
-    private bool IsValidSessionId(HttpContext context, string sessionId, string redisSessionId)
-    {
-        if (string.CompareOrdinal(sessionId, redisSessionId) == 0)
-        {
-            return true;
-        }
-
-        return false;
     }
 }
