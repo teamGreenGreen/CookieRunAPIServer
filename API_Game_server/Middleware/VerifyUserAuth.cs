@@ -70,7 +70,7 @@ public class VerifyUserAuth
 
     private async Task ErrorResponse(HttpContext context, int statusCode, EErrorCode errorCode)
     {
-        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        context.Response.StatusCode = statusCode;
         var errorJsonResponse = JsonSerializer.Serialize(new
         {
             result = errorCode
