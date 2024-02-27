@@ -34,7 +34,6 @@ public class VerifyUserAuth
 
         EErrorCode errorCode;
         string sessionId;
-        Int64 uid;
 
         // Http 헤더에서 sessionId를 가져옴
         (errorCode, sessionId) = GetSessionIdFromHeader(context);
@@ -44,14 +43,6 @@ public class VerifyUserAuth
             return;
         }
 
-        // Http 헤더에서 uid를 가져옴
-        (errorCode, uid) = GetUidFromHeader(context);
-        if (errorCode != EErrorCode.None)
-        {
-            await ErrorResponse(context, StatusCodes.Status400BadRequest, errorCode);
-            return;
-        }
-        
         // redis에 sessionId가 존재하는지 확인
         bool existSessionId = await redisDb.ExistSessionIdAsync(sessionId);
         if (!existSessionId)
@@ -60,12 +51,7 @@ public class VerifyUserAuth
             return;
         }
 
-        AuthInfo authInfo = new();
-        authInfo.Uid = uid;
-        authInfo.SessionId = sessionId;
-
-        //context.Items[nameof(AuthInfo)] = authInfo;
-        context.Features.Set<string>(authInfo.SessionId);
+        context.Features.Set<string>(sessionId);
 
         await next(context);
     }
