@@ -5,7 +5,7 @@ CREATE DATABASE IF NOT EXISTS GameDB;
 CREATE TABLE AccountDB.ACCOUNT
 (
     `user_id`              BIGINT              AUTO_INCREMENT PRIMARY KEY,
-    `email`                VARCHAR(50),
+    `email`                VARCHAR(50)		   UNIQUE,
     `password`             VARCHAR(100),
     `salt_value`           VARCHAR(100),
     `created_at`           DATETIME
@@ -15,7 +15,7 @@ CREATE TABLE GameDB.USER_INFO
 (
     `uid`                  BIGINT              AUTO_INCREMENT PRIMARY KEY,
     `user_id`              BIGINT,
-    `user_name`            VARCHAR(27),
+    `user_name`            VARCHAR(27)         UNIQUE,
     `level`                INT,
     `exp`                  INT,
     `money`                INT,
