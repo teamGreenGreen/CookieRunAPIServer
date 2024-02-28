@@ -27,8 +27,6 @@ namespace API_Game_Server.Services
             string userInfo = await redisDB.GetString(sessionIdKey);
             // 가져온 string 역직렬화
             UserInfo myInfo = JsonSerializer.Deserialize<UserInfo>(userInfo);
-            // 역직렬화한 string에서 diamond 프로퍼티만 가져오기
-            int myDiamond = myInfo.Diamond;
             // 유저의 uid 가져오기
             long myUid = myInfo.Uid;
 
@@ -52,8 +50,6 @@ namespace API_Game_Server.Services
             string userInfo = await redisDB.GetString(sessionIdKey);
             // 가져온 string 역직렬화
             UserInfo myInfo = JsonSerializer.Deserialize<UserInfo>(userInfo);
-            // 역직렬화한 string에서 diamond 프로퍼티만 가져오기
-            int myDiamond = myInfo.Diamond;
             // 유저의 uid 가져오기
             long myUid = myInfo.Uid;
 
